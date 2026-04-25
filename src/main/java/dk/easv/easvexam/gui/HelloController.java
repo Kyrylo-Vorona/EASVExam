@@ -3,11 +3,14 @@ package dk.easv.easvexam.gui;
 import dk.easv.easvexam.bll.ApiService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.layout.StackPane;
+
 import java.io.InputStream;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
@@ -20,6 +23,11 @@ public class HelloController {
 
     @FXML
     private ImageView imageView;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private StackPane imageContainer;
+    private double zoomFactor = 1.0;
 
     @FXML
     protected void onScanButtonClick() {
@@ -37,7 +45,10 @@ public class HelloController {
                     if (bufferedImage != null) {
                         javafx.scene.image.Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                         imageView.setImage(image);
-                        System.out.println("Success");
+                        zoomFactor = 1.0;
+                        double viewWidth = scrollPane.getViewportBounds().getWidth();
+                        imageView.setFitWidth(viewWidth * 0.8);
+                        applyZoom();
                     } else {
                         System.err.println("Error: file inside of ZIP is not an image or crashed");
                     }
@@ -49,6 +60,33 @@ public class HelloController {
             System.err.println("Error " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    protected void onZoomIn() {
+        zoomFactor += 0.1;
+        applyZoom();
+    }
+
+    @FXML
+    protected void onZoomOut() {
+        if (zoomFactor > 0.4) {
+            zoomFactor -= 0.2;
+            applyZoom();
+        }
+    }
+
+    private void applyZoom() {
+        imageView.setScaleX(zoomFactor);
+        imageView.setScaleY(zoomFactor);
+
+        // Чтобы картинка не уезжала, заставляем контейнер пересчитать размер
+        imageContainer.setPrefSize(
+                imageView.getBoundsInParent().getWidth(),
+                imageView.getBoundsInParent().getHeight()
+        );
+
+        scrollPane.layout();
     }
 
     @FXML

@@ -4,6 +4,8 @@ module dk.easv.easvexam {
     requires java.net.http;
     requires java.desktop;
     requires javafx.swing;
+    requires javafx.base;
+    requires javafx.graphics;
 
 
     opens dk.easv.easvexam to javafx.fxml;
