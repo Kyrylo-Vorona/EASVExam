@@ -79,8 +79,6 @@ public class HelloController {
     private void applyZoom() {
         imageView.setScaleX(zoomFactor);
         imageView.setScaleY(zoomFactor);
-
-        // Чтобы картинка не уезжала, заставляем контейнер пересчитать размер
         imageContainer.setPrefSize(
                 imageView.getBoundsInParent().getWidth(),
                 imageView.getBoundsInParent().getHeight()

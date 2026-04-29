@@ -6,6 +6,8 @@ module dk.easv.easvexam {
     requires javafx.swing;
     requires javafx.base;
     requires javafx.graphics;
+    requires com.microsoft.sqlserver.jdbc;
+    requires java.sql;
 
 
     opens dk.easv.easvexam to javafx.fxml;
