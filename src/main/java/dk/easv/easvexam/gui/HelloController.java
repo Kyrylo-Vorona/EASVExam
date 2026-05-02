@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
@@ -23,6 +24,8 @@ import javax.imageio.ImageIO;
 import java.io.InputStream;
 
 public class HelloController {
+    @FXML
+    private TextField rotateField;
     @FXML
     private ImageView imageView;
     @FXML
@@ -95,10 +98,16 @@ public class HelloController {
         scrollPane.layout();
     }
 
-    @FXML
-    protected void onRotateButtonClick() {
+    public void onRotateButtonClick() {
         if (imageView.getImage() != null) {
-            imageView.setRotate(imageView.getRotate() + 90);
+            try {
+                String text = rotateField.getText();
+                double degrees = text.isEmpty() ? 0 : Double.parseDouble(text);
+                imageView.setRotate(imageView.getRotate() + degrees);
+                rotateField.setStyle("");
+            } catch (NumberFormatException e) {
+                rotateField.setStyle("-fx-border-color: red;");
+            }
         }
     }
 
