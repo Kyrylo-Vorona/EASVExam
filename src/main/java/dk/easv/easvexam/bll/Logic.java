@@ -4,6 +4,8 @@ import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.dal.DALManager;
 
+import java.util.List;
+
 public class Logic {
     private static Logic instance;
     private Logic() {}
@@ -20,5 +22,9 @@ public class Logic {
             return null;
         }
         return DALManager.getInstance().getUsersDAO().login(username, password);
+    }
+
+    public List<User> getAllUsers() throws MyException {
+        return DALManager.getInstance().getUsersDAO().getAllUsers();
     }
 }

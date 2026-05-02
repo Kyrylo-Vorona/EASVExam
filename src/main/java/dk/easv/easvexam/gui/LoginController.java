@@ -22,10 +22,11 @@ public class LoginController {
             User loggedInUser = logic.login(username.getText(), password.getText());
             if (loggedInUser != null) {
                 if (loggedInUser.getRole().equalsIgnoreCase("ADMIN")) {
-                    String filepath = "/dk/easv/easvexam/gui/hello-view.fxml";
+                    String filepath = "/dk/easv/easvexam/gui/AdminUserManagementView.fxml";
                     openview.openView(filepath, event);
                 } else {
-
+                    String filepath = "/dk/easv/easvexam/gui/hello-view.fxml";
+                    openview.openView(filepath, event);
                 }
             } else {
                 OpenView.showErrorAlert("Wrong username or password");

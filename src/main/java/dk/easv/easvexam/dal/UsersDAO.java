@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsersDAO {
     private final ConnectionManager cm;
@@ -30,5 +32,25 @@ public class UsersDAO {
             throw new MyException("Database error: Could not log in", e);
         }
         return null;
+    }
+
+    public List<User> getAllUsers() throws MyException {
+        List<User> users = new ArrayList<>();
+        try (Connection con = cm.getConnection()) {
+            String select = "SELECT * FROM Users";
+            PreparedStatement pstmt = con.prepareStatement(select);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                users.add(new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("role"),
+                        rs.getString("email")
+                ));
+            }
+        } catch (SQLException e) {
+            throw new MyException("Could not get the list of movies", e);
+        }
+        return users;
     }
 }

@@ -4,6 +4,7 @@ import dk.easv.easvexam.be.MyException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -13,16 +14,25 @@ import java.io.IOException;
 public class OpenView {
     public FXMLLoader openView(String filepath, ActionEvent event) throws MyException {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(filepath));
-            Scene scene = new Scene(fxmlLoader.load(), 700, 450);
-            if (getClass().getResource("/css/style.css") != null) {
-                scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-            }
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(filepath));
+            Parent root = loader.load();
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            boolean isMaximized = stage.isMaximized(); // Запоминаем текущее состояние
+
+            Scene scene = new Scene(root); // Создаем сцену без жестких размеров
             stage.setScene(scene);
-            stage.show();
-            return fxmlLoader;
-        }catch(IOException e){
+
+            stage.show(); // Сначала показываем окно
+
+            // И только ПОСЛЕ show принудительно возвращаем полноэкранный режим
+            if (isMaximized) {
+                stage.setMaximized(false); // Маленький хак: сброс и повторная установка
+                stage.setMaximized(true);
+            }
+
+            return loader;
+        } catch (IOException e) {
             throw new MyException("Could not load the window: " + filepath, e);
         }
     }

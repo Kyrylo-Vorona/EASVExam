@@ -1,6 +1,8 @@
 package dk.easv.easvexam.gui;
 
+import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.bll.ApiService;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
@@ -28,6 +30,7 @@ public class HelloController {
     @FXML
     private StackPane imageContainer;
     private double zoomFactor = 1.0;
+    OpenView openview = new OpenView();
 
     @FXML
     protected void onScanButtonClick() {
@@ -94,10 +97,12 @@ public class HelloController {
         }
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
+    public void logOut(ActionEvent event) {
+        try {
+            String filepath = "/dk/easv/easvexam/gui/LoginView.fxml";
+            openview.openView(filepath, event);
+        } catch (MyException e) {
+            OpenView.showErrorAlert(e.getMessage());
+        }
     }
 }
