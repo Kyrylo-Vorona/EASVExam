@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 
 import java.io.InputStream;
@@ -22,7 +23,6 @@ import javax.imageio.ImageIO;
 import java.io.InputStream;
 
 public class HelloController {
-
     @FXML
     private ImageView imageView;
     @FXML
@@ -35,23 +35,28 @@ public class HelloController {
     @FXML
     protected void onScanButtonClick() {
         ApiService apiService = new ApiService();
-
         try {
             InputStream stream = apiService.fetchRandomTiff();
             try (ZipInputStream zipIn = new ZipInputStream(stream)) {
                 ZipEntry entry = zipIn.getNextEntry();
-
                 if (entry != null) {
                     byte[] bytes = zipIn.readAllBytes();
                     BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(bytes));
-
                     if (bufferedImage != null) {
                         javafx.scene.image.Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+                        imageView.fitWidthProperty().unbind();
+                        imageView.fitHeightProperty().unbind();
                         imageView.setImage(image);
+                        imageView.setPreserveRatio(true);
                         zoomFactor = 1.0;
-                        double viewWidth = scrollPane.getViewportBounds().getWidth();
-                        imageView.setFitWidth(viewWidth * 0.8);
-                        applyZoom();
+                        imageView.setScaleX(1.0);
+                        imageView.setScaleY(1.0);
+                        imageView.setRotate(0);
+                        scrollPane.setVvalue(0.0);
+                        scrollPane.setHvalue(0.0);
+                        imageView.fitWidthProperty().bind(scrollPane.widthProperty());
+                        imageView.fitHeightProperty().bind(scrollPane.heightProperty());
+                        imageContainer.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
                     } else {
                         System.err.println("Error: file inside of ZIP is not an image or crashed");
                     }
@@ -67,6 +72,8 @@ public class HelloController {
 
     @FXML
     protected void onZoomIn() {
+        imageView.fitWidthProperty().unbind();
+        imageView.fitHeightProperty().unbind();
         zoomFactor += 0.1;
         applyZoom();
     }
@@ -74,7 +81,9 @@ public class HelloController {
     @FXML
     protected void onZoomOut() {
         if (zoomFactor > 0.4) {
-            zoomFactor -= 0.2;
+            imageView.fitWidthProperty().unbind();
+            imageView.fitHeightProperty().unbind();
+            zoomFactor -= 0.1;
             applyZoom();
         }
     }
@@ -82,11 +91,7 @@ public class HelloController {
     private void applyZoom() {
         imageView.setScaleX(zoomFactor);
         imageView.setScaleY(zoomFactor);
-        imageContainer.setPrefSize(
-                imageView.getBoundsInParent().getWidth(),
-                imageView.getBoundsInParent().getHeight()
-        );
-
+        imageContainer.setPrefSize(imageView.getBoundsInParent().getWidth(), imageView.getBoundsInParent().getHeight());
         scrollPane.layout();
     }
 
