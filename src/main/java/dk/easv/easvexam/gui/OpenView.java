@@ -12,25 +12,30 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class OpenView {
+    private static OpenView instance;
+
+    private OpenView() {}
+
+    public static OpenView getInstance() {
+        if (instance == null) {
+            instance = new OpenView();
+        }
+        return instance;
+    }
+
     public FXMLLoader openView(String filepath, ActionEvent event) throws MyException {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(filepath));
             Parent root = loader.load();
-
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            boolean isMaximized = stage.isMaximized(); // Запоминаем текущее состояние
-
-            Scene scene = new Scene(root); // Создаем сцену без жестких размеров
+            boolean isMaximized = stage.isMaximized();
+            Scene scene = new Scene(root);
             stage.setScene(scene);
-
-            stage.show(); // Сначала показываем окно
-
-            // И только ПОСЛЕ show принудительно возвращаем полноэкранный режим
+            stage.show();
             if (isMaximized) {
-                stage.setMaximized(false); // Маленький хак: сброс и повторная установка
+                stage.setMaximized(false);
                 stage.setMaximized(true);
             }
-
             return loader;
         } catch (IOException e) {
             throw new MyException("Could not load the window: " + filepath, e);

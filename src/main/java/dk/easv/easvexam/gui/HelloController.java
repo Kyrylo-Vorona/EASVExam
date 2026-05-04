@@ -33,13 +33,11 @@ public class HelloController {
     @FXML
     private StackPane imageContainer;
     private double zoomFactor = 1.0;
-    OpenView openview = new OpenView();
 
     @FXML
     protected void onScanButtonClick() {
-        ApiService apiService = new ApiService();
         try {
-            InputStream stream = apiService.fetchRandomTiff();
+            InputStream stream = ApiService.getInstance().fetchRandomTiff();
             try (ZipInputStream zipIn = new ZipInputStream(stream)) {
                 ZipEntry entry = zipIn.getNextEntry();
                 if (entry != null) {
@@ -114,7 +112,7 @@ public class HelloController {
     public void logOut(ActionEvent event) {
         try {
             String filepath = "/dk/easv/easvexam/gui/LoginView.fxml";
-            openview.openView(filepath, event);
+            OpenView.getInstance().openView(filepath, event);
         } catch (MyException e) {
             OpenView.showErrorAlert(e.getMessage());
         }

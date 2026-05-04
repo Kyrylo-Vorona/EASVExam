@@ -1,5 +1,7 @@
 package dk.easv.easvexam.bll;
 
+import dk.easv.easvexam.dal.DALManager;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -7,6 +9,15 @@ import java.net.http.HttpResponse;
 import java.io.InputStream;
 
 public class ApiService {
+
+    public static ApiService instance;
+    public static ApiService getInstance() {
+        if (instance == null) {
+            instance = new ApiService();
+        }
+        return instance;
+    }
+
     private final String BASE_URL = "https://studentiffapi-production.up.railway.app";
     private final HttpClient httpClient = HttpClient.newHttpClient();
 

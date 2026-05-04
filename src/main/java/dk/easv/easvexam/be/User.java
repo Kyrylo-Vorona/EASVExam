@@ -4,13 +4,11 @@ public class User {
     private int id;
     private String username;
     private String role;
-    private String email;
 
-    public User(int id, String username,String role, String email) {
+    public User(int id, String username,String role) {
         this.id = id;
         this.username = username;
         this.role = role;
-        this.email = email;
     }
 
     public int getId() {
@@ -25,10 +23,6 @@ public class User {
         return role;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -39,9 +33,5 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }
