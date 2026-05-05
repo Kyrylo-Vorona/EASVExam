@@ -4,9 +4,12 @@ import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.bll.ApiService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
@@ -16,6 +19,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 
 import java.io.InputStream;
+import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
 import java.io.ByteArrayInputStream;
@@ -23,7 +28,9 @@ import java.io.ByteArrayInputStream;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
 
-public class HelloController {
+public class HelloController implements Initializable {
+    @FXML
+    private Slider brightnessSlider;
     @FXML
     private TextField rotateField;
     @FXML
@@ -33,6 +40,7 @@ public class HelloController {
     @FXML
     private StackPane imageContainer;
     private double zoomFactor = 1.0;
+    private ColorAdjust colorAdjust = new ColorAdjust();
 
     @FXML
     protected void onScanButtonClick() {
@@ -53,6 +61,8 @@ public class HelloController {
                         imageView.setScaleX(1.0);
                         imageView.setScaleY(1.0);
                         imageView.setRotate(0);
+                        colorAdjust.setBrightness(0.0);
+                        brightnessSlider.setValue(0.0);
                         scrollPane.setVvalue(0.0);
                         scrollPane.setHvalue(0.0);
                         imageView.fitWidthProperty().bind(scrollPane.widthProperty());
@@ -116,5 +126,17 @@ public class HelloController {
         } catch (MyException e) {
             OpenView.showErrorAlert(e.getMessage());
         }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        imageView.setEffect(colorAdjust);
+        brightnessSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            applyBrightness(newValue.doubleValue());
+        });
+    }
+
+    private void applyBrightness(double value) {
+        colorAdjust.setBrightness(value);
     }
 }
