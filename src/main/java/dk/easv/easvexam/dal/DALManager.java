@@ -3,6 +3,7 @@ package dk.easv.easvexam.dal;
 public class DALManager {
     private static DALManager instance;
     private UsersDAO usersDAO;
+    private ProfilesDAO profilesDAO;
 
     public static DALManager getInstance() {
         if (instance == null) {
@@ -20,5 +21,10 @@ public class DALManager {
     public UsersDAO getUsersDAO() {
         if (usersDAO == null) usersDAO = new UsersDAO();
         return usersDAO;
+    }
+
+    public ProfilesDAO getProfilesDAO() {
+        if (profilesDAO == null) profilesDAO = new ProfilesDAO();
+        return profilesDAO;
     }
 }

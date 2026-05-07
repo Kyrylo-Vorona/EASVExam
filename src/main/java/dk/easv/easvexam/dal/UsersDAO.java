@@ -101,7 +101,7 @@ public class UsersDAO {
                 ));
             }
         } catch (SQLException e) {
-            throw new MyException("Could not get the list of movies", e);
+            throw new MyException("Could not get the list of users", e);
         }
         return users;
     }

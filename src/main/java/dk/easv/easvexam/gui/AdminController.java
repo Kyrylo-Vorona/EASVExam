@@ -125,4 +125,13 @@ public class AdminController implements Initializable {
             readDataIntoList();
         }
     }
+
+    public void openProfileManagement(ActionEvent event) {
+        try {
+            String filepath = "/dk/easv/easvexam/gui/AdminProfileManagementView.fxml";
+            OpenView.getInstance().openView(filepath, event);
+        } catch (MyException e) {
+            OpenView.showErrorAlert(e.getMessage());
+        }
+    }
 }

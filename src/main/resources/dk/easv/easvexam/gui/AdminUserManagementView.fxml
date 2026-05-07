@@ -47,6 +47,7 @@
                 <HBox alignment="CENTER" prefHeight="37.0" prefWidth="333.0" spacing="15.0">
                     <children>
                         <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#openAddUser" prefHeight="33.0" prefWidth="484.0" text="Add User" HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#openProfileManagement" prefHeight="33.0" prefWidth="368.0" text="Profile management" />
                     </children>
                 </HBox>
 

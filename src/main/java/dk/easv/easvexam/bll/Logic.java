@@ -1,6 +1,7 @@
 package dk.easv.easvexam.bll;
 
 import dk.easv.easvexam.be.MyException;
+import dk.easv.easvexam.be.Profile;
 import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.dal.DALManager;
 
@@ -39,7 +40,23 @@ public class Logic {
         DALManager.getInstance().getUsersDAO().deleteUser(user);
     }
 
+    public void addProfile(int id, String name, int rotateDegrees, int brightness) throws MyException {
+        DALManager.getInstance().getProfilesDAO().addProfile(id, name, rotateDegrees, brightness);
+    }
+
+    public void editProfile(Profile profile) throws MyException {
+        DALManager.getInstance().getProfilesDAO().editProfile(profile);
+    }
+
+    public void deleteProfile(Profile profile) throws MyException {
+        DALManager.getInstance().getProfilesDAO().deleteProfile(profile.getId());
+    }
+
     public List<User> getAllUsers() throws MyException {
         return DALManager.getInstance().getUsersDAO().getAllUsers();
+    }
+
+    public List<Profile> getAllProfiles() throws MyException {
+        return DALManager.getInstance().getProfilesDAO().getAllProfiles();
     }
 }
