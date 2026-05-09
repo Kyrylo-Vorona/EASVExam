@@ -22,6 +22,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.Group?>
 <VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.AdminProfileManagementController">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-padding: 10; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;">
@@ -112,7 +113,8 @@
                                     <content>
                                         <StackPane fx:id="imageContainer">
                                             <children>
-                                                <ImageView fx:id="imagePreview" preserveRatio="true" />
+                                                <Group> <ImageView fx:id="imagePreview" preserveRatio="true" />
+                                                </Group>
                                             </children>
                                         </StackPane>
                                     </content>

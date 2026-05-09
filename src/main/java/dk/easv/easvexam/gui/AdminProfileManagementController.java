@@ -73,6 +73,20 @@ public class AdminProfileManagementController implements Initializable {
                 showProfileDetails(newValue);
             }
         });
+
+        txtRotation.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                if (!newValue.isEmpty()) {
+                    double degrees = Double.parseDouble(newValue);
+                    imagePreview.setRotate(degrees);
+                }
+                else {
+                    imagePreview.setRotate(0);
+                }
+            } catch (NumberFormatException e) {
+
+            }
+        });
         initPreview();
     }
 
@@ -93,22 +107,6 @@ public class AdminProfileManagementController implements Initializable {
         txtRotation.setText(String.valueOf(profile.getRotateDegrees()));
         imagePreview.setRotate(profile.getRotateDegrees());
         chkBarcode.setSelected(profile.isSplitByBarcode());
-    }
-
-    private void applyEffects() {
-        if (imagePreview.getImage() == null) return;
-
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setBrightness(sliderBrightness.getValue());
-
-        try {
-            double rotation = Double.parseDouble(txtRotation.getText());
-            imagePreview.setRotate(rotation);
-        } catch (NumberFormatException e) {
-
-        }
-
-        imagePreview.setEffect(colorAdjust);
     }
 
     private void refreshTable() {
