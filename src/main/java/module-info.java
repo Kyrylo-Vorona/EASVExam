@@ -11,6 +11,7 @@ module dk.easv.easvexam {
     //requires dk.easv.easvexam;
     //requires dk.easv.easvexam;
     //requires dk.easv.easvexam;
+    //requires dk.easv.easvexam;
 
 
     opens dk.easv.easvexam to javafx.fxml;

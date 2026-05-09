@@ -40,8 +40,8 @@ public class Logic {
         DALManager.getInstance().getUsersDAO().deleteUser(user);
     }
 
-    public void addProfile(int id, String name, int rotateDegrees, int brightness) throws MyException {
-        DALManager.getInstance().getProfilesDAO().addProfile(id, name, rotateDegrees, brightness);
+    public void addProfile(String name, int rotateDegrees, int brightness) throws MyException {
+        DALManager.getInstance().getProfilesDAO().addProfile(name, rotateDegrees, brightness);
     }
 
     public void editProfile(Profile profile) throws MyException {

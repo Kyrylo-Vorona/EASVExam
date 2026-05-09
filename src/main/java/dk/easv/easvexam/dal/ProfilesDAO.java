@@ -32,14 +32,17 @@ public class ProfilesDAO {
         return profiles;
     }
 
-    public void addProfile(int id, String name, int rotateDegrees, int brightness) throws MyException {
+    public void addProfile(String name, int rotateDegrees, int brightness) throws MyException {
+        String sql = "INSERT INTO Profiles (profile_name, rotate_degrees, brightness_adjustment, split_by_barcode) VALUES (?, ?, ?, ?)";
+
         try (Connection con = cm.getConnection()) {
-            String add = "INSERT INTO Profiles (profile_name, rotate_degrees, brightness_adjustment, split_by_barcode) VALUES (?, ?, ?, ?)";
-            PreparedStatement pstmt = con.prepareStatement(add);
-            pstmt.setInt(1, id);
-            pstmt.setString(2, name);
-            pstmt.setInt(3, rotateDegrees);
-            pstmt.setInt(4, brightness);
+            PreparedStatement pstmt = con.prepareStatement(sql);
+
+            pstmt.setString(1, name);           // 1-й вопрос: profile_name
+            pstmt.setInt(2, rotateDegrees);    // 2-й вопрос: rotate_degrees
+            pstmt.setInt(3, brightness);       // 3-й вопрос: brightness_adjustment
+            pstmt.setBoolean(4, false);        // 4-й вопрос: split_by_barcode (по умолчанию false)
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new MyException("Database error: Could not add profile", e);
