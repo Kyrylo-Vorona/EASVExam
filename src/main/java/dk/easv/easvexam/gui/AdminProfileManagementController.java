@@ -55,38 +55,29 @@ public class AdminProfileManagementController implements Initializable {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         setupActionsColumn();
         refreshTable();
-        tableProfiles.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                showProfileDetails(newValue);
-            }
+
+        tableProfiles.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newValue) -> {
+            if (newValue != null) showProfileDetails(newValue);
         });
+
         ColorAdjust colorAdjust = new ColorAdjust();
         imagePreview.setEffect(colorAdjust);
-
         sliderBrightness.valueProperty().addListener((obs, oldVal, newVal) -> {
             colorAdjust.setBrightness(newVal.doubleValue());
             lblBrightnessValue.setText((int)(newVal.doubleValue() * 100) + "%");
         });
 
-        tableProfiles.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newValue) -> {
-            if (newValue != null) {
-                showProfileDetails(newValue);
-            }
-        });
-
-        txtRotation.textProperty().addListener((observable, oldValue, newValue) -> {
+        txtRotation.textProperty().addListener((obs, oldVal, newVal) -> {
             try {
-                if (!newValue.isEmpty()) {
-                    double degrees = Double.parseDouble(newValue);
-                    imagePreview.setRotate(degrees);
+                if (newVal != null && !newVal.isEmpty()) {
+                    imagePreview.setRotate(Double.parseDouble(newVal));
                 }
                 else {
                     imagePreview.setRotate(0);
                 }
-            } catch (NumberFormatException e) {
-
-            }
+            } catch (NumberFormatException ignored) {}
         });
+
         initPreview();
     }
 
