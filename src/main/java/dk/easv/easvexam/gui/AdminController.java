@@ -48,6 +48,7 @@ public class AdminController implements Initializable {
         try {
             readDataIntoList();
             setupActionsColumn();
+            userTable.setFixedCellSize(35);
         } catch (MyException e) {
             OpenView.showErrorAlert(e.getMessage());
         }
