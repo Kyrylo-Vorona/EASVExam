@@ -2,11 +2,13 @@ package dk.easv.easvexam.gui;
 
 import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.be.Profile;
+import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.bll.Logic;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -133,6 +135,7 @@ public class AdminProfileManagementController implements Initializable {
                         pane.setSpacing(5);
                         btnAssign.setOnAction(event -> {
                             Profile data = getTableView().getItems().get(getIndex());
+                            openAssignUserView(event, data);
                         });
 
                         btnDelete.setOnAction(event -> {
@@ -181,6 +184,17 @@ public class AdminProfileManagementController implements Initializable {
             OpenView.getInstance().openView(filepath, event);
         } catch (MyException e) {
             OpenView.showErrorAlert(e.getMessage());
+        }
+    }
+
+    public void openAssignUserView(ActionEvent event, Profile profile) {
+        try {
+            FXMLLoader loader = OpenView.getInstance().openView("/dk/easv/easvexam/gui/AssignUsersView.fxml", event);
+            AssignUsersController controller = loader.getController();
+            controller.setTable(profile);
+        } catch (MyException e) {
+            OpenView.showErrorAlert(e.getMessage());
+            e.printStackTrace();
         }
     }
 

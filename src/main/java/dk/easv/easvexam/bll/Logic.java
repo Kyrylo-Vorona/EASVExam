@@ -52,6 +52,10 @@ public class Logic {
         DALManager.getInstance().getProfilesDAO().deleteProfile(profile.getId());
     }
 
+    public void assignUsersToProfile(int profileId, List<Integer> userIds) throws MyException {
+        DALManager.getInstance().getProfilesDAO().assignUsersToProfile(profileId, userIds);
+    }
+
     public List<User> getAllUsers() throws MyException {
         return DALManager.getInstance().getUsersDAO().getAllUsers();
     }

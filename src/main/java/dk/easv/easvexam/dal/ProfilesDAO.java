@@ -34,15 +34,12 @@ public class ProfilesDAO {
 
     public void addProfile(String name, int rotateDegrees, int brightness) throws MyException {
         String sql = "INSERT INTO Profiles (profile_name, rotate_degrees, brightness_adjustment, split_by_barcode) VALUES (?, ?, ?, ?)";
-
         try (Connection con = cm.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement(sql);
-
-            pstmt.setString(1, name);           // 1-й вопрос: profile_name
-            pstmt.setInt(2, rotateDegrees);    // 2-й вопрос: rotate_degrees
-            pstmt.setInt(3, brightness);       // 3-й вопрос: brightness_adjustment
-            pstmt.setBoolean(4, false);        // 4-й вопрос: split_by_barcode (по умолчанию false)
-
+            pstmt.setString(1, name);
+            pstmt.setInt(2, rotateDegrees);
+            pstmt.setInt(3, brightness);
+            pstmt.setBoolean(4, false);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new MyException("Database error: Could not add profile", e);
@@ -72,6 +69,36 @@ public class ProfilesDAO {
             pstmt.executeUpdate();
         }catch (SQLException e) {
             throw new MyException("Could not delete selected profile", e);
+        }
+    }
+
+    public void assignUsersToProfile(int profileId, List<Integer> userIds) throws MyException {
+        String deleteSql = "DELETE FROM User_Profiles WHERE profile_id = ?";
+        String insertSql = "INSERT INTO User_Profiles (user_id, profile_id) VALUES (?, ?)";
+        try (Connection con = cm.getConnection()) {
+            con.setAutoCommit(false);
+            try {
+                try (PreparedStatement deleteStmt = con.prepareStatement(deleteSql)) {
+                    deleteStmt.setInt(1, profileId);
+                    deleteStmt.executeUpdate();
+                }
+                try (PreparedStatement insertStmt = con.prepareStatement(insertSql)) {
+                    for (Integer userId : userIds) {
+                        insertStmt.setInt(1, userId);
+                        insertStmt.setInt(2, profileId);
+                        insertStmt.addBatch(); // Добавляем в пакет
+                    }
+                    insertStmt.executeBatch();
+                }
+                con.commit();
+            } catch (SQLException e) {
+                con.rollback();
+                throw e;
+            } finally {
+                con.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new MyException("Database error: Could not assign users to profile", e);
         }
     }
 }
