@@ -64,24 +64,26 @@ public class HelloController implements Initializable {
                         imageView.fitHeightProperty().unbind();
                         imageView.setImage(image);
                         imageView.setPreserveRatio(true);
-                        zoomFactor = 1.0;
+                        imageView.setRotate(0);
                         imageView.setScaleX(1.0);
                         imageView.setScaleY(1.0);
-                        imageView.setRotate(0);
-                        colorAdjust.setBrightness(0.0);
-                        brightnessSlider.setValue(0.0);
-                        scrollPane.setVvalue(0.0);
-                        scrollPane.setHvalue(0.0);
-                        imageView.fitWidthProperty().bind(scrollPane.widthProperty());
-                        imageView.fitHeightProperty().bind(scrollPane.heightProperty());
-                        imageContainer.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+                        zoomFactor = 1.0;
                         Profile selected = comboProfiles.getValue();
                         if (selected != null) {
                             imageView.setRotate(selected.getRotateDegrees());
-                            double brightnessVal = (selected.getBrightness() - 50) / 50.0;
+                            double brightnessVal = selected.getBrightness() / 100.0;
                             applyBrightness(brightnessVal);
                             brightnessSlider.setValue(brightnessVal);
                         }
+                        double viewWidth = scrollPane.getViewportBounds().getWidth();
+                        double viewHeight = scrollPane.getViewportBounds().getHeight();
+                        if (viewWidth <= 0) viewWidth = scrollPane.getWidth();
+                        if (viewHeight <= 0) viewHeight = scrollPane.getHeight();
+                        imageView.setFitWidth(viewWidth - 10);
+                        imageView.setFitHeight(viewHeight - 10);
+                        imageContainer.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+                        scrollPane.setVvalue(0.0);
+                        scrollPane.setHvalue(0.0);
                     } else {
                         System.err.println("Error: file inside of ZIP is not an image or crashed");
                     }
