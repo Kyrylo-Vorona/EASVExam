@@ -145,5 +145,22 @@ public class ProfilesDAO {
         }
         return userProfiles;
     }
+
+    public List<Integer> getUserIdsForProfile(int profileId) throws MyException {
+        List<Integer> userIds = new ArrayList<>();
+        String sql = "SELECT user_id FROM User_Profiles WHERE profile_id = ?";
+
+        try (Connection con = cm.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, profileId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                userIds.add(rs.getInt("user_id"));
+            }
+        } catch (SQLException e) {
+            throw new MyException("Could not fetch assigned users for profile", e);
+        }
+        return userIds;
+    }
 }
 

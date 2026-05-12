@@ -17,7 +17,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AssignUsersController {
@@ -40,14 +42,15 @@ public class AssignUsersController {
     private void loadUsers() {
         try {
             List<User> allUsers = logic.getAllUsers();
+            List<Integer> assignedIds = logic.getUserIdsForProfile(selectedProfile.getId());
             userWrappers.clear();
-
             List<User> onlyRegularUsers = allUsers.stream()
                     .filter(u -> u.getRole().equalsIgnoreCase("USER"))
                     .collect(Collectors.toList());
 
             for (User u : onlyRegularUsers) {
-                userWrappers.add(new UserWrapper(u, false));
+                boolean isAlreadyAssigned = assignedIds.contains(u.getId());
+                userWrappers.add(new UserWrapper(u, isAlreadyAssigned));
             }
 
             tableUsers.setItems(userWrappers);
@@ -58,10 +61,12 @@ public class AssignUsersController {
     }
 
     private void setupTable() {
-        colUsername.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUser().getUsername()));
-        colRole.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUser().getRole()));
-
+        colUsername.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUser().getUsername()));
+        colRole.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUser().getRole()));
         colSelected.setCellValueFactory(cellData -> cellData.getValue().selectedProperty());
+
         colSelected.setCellFactory(CheckBoxTableCell.forTableColumn(colSelected));
         tableUsers.setEditable(true);
     }
@@ -69,12 +74,12 @@ public class AssignUsersController {
     @FXML
     private void onSave(ActionEvent event) {
         try {
-            List<Integer> selectedUserIds = userWrappers.stream()
+            List<Integer> idsToAssign = userWrappers.stream()
                     .filter(UserWrapper::isSelected)
                     .map(w -> w.getUser().getId())
                     .collect(Collectors.toList());
 
-            logic.assignUsersToProfile(selectedProfile.getId(), selectedUserIds);
+            logic.assignUsersToProfile(selectedProfile.getId(), idsToAssign);
             cancel(event);
         } catch (MyException e) {
             OpenView.showErrorAlert(e.getMessage());
@@ -85,7 +90,7 @@ public class AssignUsersController {
         try {
             String filepath = "/dk/easv/easvexam/gui/AdminProfileManagementView.fxml";
             OpenView.getInstance().openView(filepath, event);
-        }catch(MyException e){
+        } catch(MyException e){
             OpenView.showErrorAlert(e.getMessage());
         }
     }
@@ -101,6 +106,7 @@ public class AssignUsersController {
 
         public User getUser() { return user; }
         public boolean isSelected() { return selected.get(); }
+        public void setSelected(boolean val) { this.selected.set(val); }
         public BooleanProperty selectedProperty() { return selected; }
     }
 }

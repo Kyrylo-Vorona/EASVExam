@@ -72,4 +72,8 @@ public class Logic {
     public List<Profile> getProfilesForUser(int userId) throws MyException {
         return DALManager.getInstance().getProfilesDAO().getProfilesForUser(userId);
     }
+
+    public List<Integer> getUserIdsForProfile(int profileId) throws MyException {
+        return DALManager.getInstance().getProfilesDAO().getUserIdsForProfile(profileId);
+    }
 }
