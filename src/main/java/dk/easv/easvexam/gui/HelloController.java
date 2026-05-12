@@ -1,14 +1,15 @@
 package dk.easv.easvexam.gui;
 
 import dk.easv.easvexam.be.MyException;
+import dk.easv.easvexam.be.Profile;
+import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.bll.ApiService;
+import dk.easv.easvexam.bll.Logic;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,9 +18,11 @@ import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.util.StringConverter;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
@@ -34,6 +37,8 @@ public class HelloController implements Initializable {
     @FXML
     private TextField rotateField;
     @FXML
+    private ComboBox<Profile> comboProfiles;
+    @FXML
     private ImageView imageView;
     @FXML
     private ScrollPane scrollPane;
@@ -41,6 +46,8 @@ public class HelloController implements Initializable {
     private StackPane imageContainer;
     private double zoomFactor = 1.0;
     private ColorAdjust colorAdjust = new ColorAdjust();
+    private User currentUser;
+    private Logic logic = Logic.getInstance();
 
     @FXML
     protected void onScanButtonClick() {
@@ -68,6 +75,13 @@ public class HelloController implements Initializable {
                         imageView.fitWidthProperty().bind(scrollPane.widthProperty());
                         imageView.fitHeightProperty().bind(scrollPane.heightProperty());
                         imageContainer.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+                        Profile selected = comboProfiles.getValue();
+                        if (selected != null) {
+                            imageView.setRotate(selected.getRotateDegrees());
+                            double brightnessVal = (selected.getBrightness() - 50) / 50.0;
+                            applyBrightness(brightnessVal);
+                            brightnessSlider.setValue(brightnessVal);
+                        }
                     } else {
                         System.err.println("Error: file inside of ZIP is not an image or crashed");
                     }
@@ -78,6 +92,22 @@ public class HelloController implements Initializable {
         } catch (Exception e) {
             System.err.println("Error " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    public void setUser(User user) {
+        this.currentUser = user;
+        loadUserProfiles();
+    }
+
+    private void loadUserProfiles() {
+        try {
+            if (currentUser != null) {
+                List profiles = logic.getProfilesForUser(currentUser.getId());
+                comboProfiles.setItems(FXCollections.observableArrayList(profiles));
+            }
+        } catch (MyException e) {
+            OpenView.showErrorAlert("Could not load profiles: " + e.getMessage());
         }
     }
 
@@ -133,6 +163,16 @@ public class HelloController implements Initializable {
         imageView.setEffect(colorAdjust);
         brightnessSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             applyBrightness(newValue.doubleValue());
+        });
+        comboProfiles.setConverter(new StringConverter<Profile>() {
+            @Override
+            public String toString(Profile profile) {
+                return (profile == null) ? "" : profile.getName();
+            }
+            @Override
+            public Profile fromString(String string) {
+                return null;
+            }
         });
     }
 

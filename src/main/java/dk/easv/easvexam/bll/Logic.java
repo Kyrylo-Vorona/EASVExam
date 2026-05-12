@@ -68,4 +68,8 @@ public class Logic {
     public Map<Integer, List<String>> getUsersProfilesMap() throws MyException {
         return DALManager.getInstance().getProfilesDAO().getUsersProfilesMap();
     }
+
+    public List<Profile> getProfilesForUser(int userId) throws MyException {
+        return DALManager.getInstance().getProfilesDAO().getProfilesForUser(userId);
+    }
 }

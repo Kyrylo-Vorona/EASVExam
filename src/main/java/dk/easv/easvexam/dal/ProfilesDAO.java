@@ -122,5 +122,28 @@ public class ProfilesDAO {
         }
         return userProfilesMap;
     }
+
+    public List<Profile> getProfilesForUser(int userId) throws MyException {
+        List<Profile> userProfiles = new ArrayList<>();
+        String sql = "SELECT p.* FROM Profiles p JOIN User_Profiles up ON p.id = up.profile_id WHERE up.user_id = ?";
+        try (Connection con = cm.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("profile_name");
+                int rotation = rs.getInt("rotate_degrees");
+                int brightness = rs.getInt("brightness_adjustment");
+                boolean splitByBarcode = rs.getBoolean("split_by_barcode");
+
+                Profile profile = new Profile(id, name, rotation, brightness, splitByBarcode);
+                userProfiles.add(profile);
+            }
+        } catch (SQLException e) {
+            throw new MyException("Could not fetch profiles for user ID: " + userId, e);
+        }
+        return userProfiles;
+    }
 }
 
