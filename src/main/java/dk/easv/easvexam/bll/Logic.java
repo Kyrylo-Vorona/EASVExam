@@ -6,6 +6,7 @@ import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.dal.DALManager;
 
 import java.util.List;
+import java.util.Map;
 
 public class Logic {
     private static Logic instance;
@@ -62,5 +63,9 @@ public class Logic {
 
     public List<Profile> getAllProfiles() throws MyException {
         return DALManager.getInstance().getProfilesDAO().getAllProfiles();
+    }
+
+    public Map<Integer, List<String>> getUsersProfilesMap() throws MyException {
+        return DALManager.getInstance().getProfilesDAO().getUsersProfilesMap();
     }
 }

@@ -1,6 +1,7 @@
 package dk.easv.easvexam.gui;
 
 import dk.easv.easvexam.be.MyException;
+import dk.easv.easvexam.be.Profile;
 import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.bll.Logic;
 import javafx.collections.FXCollections;
@@ -18,6 +19,8 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -29,8 +32,11 @@ public class AdminController implements Initializable {
     @FXML
     private TableColumn<User, Void> colActions;
     @FXML
+    private TableColumn<User, String> profilesColumn;
+    @FXML
     private TableView<User> userTable;
     private ObservableList<User> userList;
+    private Map<Integer, List<String>> userProfilesMap;
 
     private Logic logic = Logic.getInstance();
 
@@ -57,9 +63,11 @@ public class AdminController implements Initializable {
     private void readDataIntoList() throws MyException {
         userList = FXCollections.observableArrayList();
         userList.addAll(logic.getAllUsers());
+        userProfilesMap = logic.getUsersProfilesMap();
         userTable.setItems(userList);
         usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
         roleColumn.setCellValueFactory(new PropertyValueFactory<>("role"));
+        setupProfilesColumn();
     }
 
     private void setupActionsColumn() {
@@ -96,6 +104,18 @@ public class AdminController implements Initializable {
             }
         };
         colActions.setCellFactory(cellFactory);
+    }
+
+    private void setupProfilesColumn() {
+        profilesColumn.setCellValueFactory(cellData -> {
+            User user = cellData.getValue();
+            List<String> profileNames = userProfilesMap.get(user.getId());
+            if (profileNames == null || profileNames.isEmpty()) {
+                return new javafx.beans.property.SimpleStringProperty("-");
+            }
+            String joinedNames = String.join(", ", profileNames);
+            return new javafx.beans.property.SimpleStringProperty(joinedNames);
+        });
     }
 
     public void openAddUser(ActionEvent event) {

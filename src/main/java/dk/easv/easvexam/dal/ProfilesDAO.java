@@ -5,7 +5,9 @@ import dk.easv.easvexam.be.Profile;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProfilesDAO {
     private final ConnectionManager cm;
@@ -100,6 +102,25 @@ public class ProfilesDAO {
         } catch (SQLException e) {
             throw new MyException("Database error: Could not assign users to profile", e);
         }
+    }
+
+    public Map<Integer, List<String>> getUsersProfilesMap() throws MyException {
+        Map<Integer, List<String>> userProfilesMap = new HashMap<>();
+        String sql = "SELECT up.user_id, p.profile_name FROM User_Profiles up JOIN Profiles p ON up.profile_id = p.id";
+
+        try (Connection con = cm.getConnection()) {
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                int userId = rs.getInt("user_id");
+                String profileName = rs.getString("profile_name");
+                userProfilesMap.computeIfAbsent(userId, k -> new ArrayList<>()).add(profileName);
+            }
+        } catch (SQLException e) {
+            throw new MyException("Could not fetch user profiles mapping", e);
+        }
+        return userProfilesMap;
     }
 }
 
