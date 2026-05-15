@@ -21,22 +21,26 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.AdminProfileManagementController">
+<VBox prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.AdminProfileManagementController">
     <children>
-        <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="1001.0" spacing="15.0" style="-fx-padding: 10; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;">
+        <HBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="1001.0" spacing="15.0" style="-fx-padding: 10; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;">
             <children>
-                <Button mnemonicParsing="false" onAction="#openUserManagement" prefHeight="39.0" prefWidth="112.0" text="User Management" />
+                <Button mnemonicParsing="false" onAction="#openUserManagement" prefHeight="50.0" prefWidth="160.0" text="User Management" />
                 <Separator orientation="VERTICAL" />
-                <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Profile Management" />
+                <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Profile Management" />
                 <Region HBox.hgrow="ALWAYS" />
-                <Button mnemonicParsing="false" onAction="#logOut" text="Log out" />
+                <Button mnemonicParsing="false" onAction="#logOut" prefHeight="50.0" prefWidth="160.0" text="Log out">
+               <font>
+                  <Font size="18.0" />
+               </font></Button>
             </children>
         </HBox>
 
         <SplitPane dividerPositions="0.4" VBox.vgrow="ALWAYS">
             <items>
-                <AnchorPane minWidth="350.0">
+                <AnchorPane minWidth="380.0">
                     <children>
                         <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <padding>
@@ -54,13 +58,17 @@
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                     </columnResizePolicy>
                                 </TableView>
-                                <Button mnemonicParsing="false" onAction="#onAddNewProfile" prefHeight="48.0" prefWidth="101.0" text="Add New Profile" />
+                                <HBox alignment="CENTER_LEFT">
+                                    <children>
+                                        <Button mnemonicParsing="false" onAction="#onAddNewProfile" prefHeight="50.0" prefWidth="160.0" text="Add New Profile" />
+                                    </children>
+                                </HBox>
                             </children>
                         </VBox>
                     </children>
                 </AnchorPane>
 
-                <AnchorPane minWidth="450.0">
+                <AnchorPane minWidth="500.0">
                     <children>
                         <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <padding>
@@ -75,9 +83,9 @@
                                         <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                                     </columnConstraints>
                                     <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <children>
                                         <Label text="Name:" />
@@ -90,14 +98,14 @@
                                                     <image><Image url="@images/3sun.png" /></image>
                                                 </ImageView>
                                                 <Slider fx:id="sliderBrightness" max="1.0" min="-1.0" HBox.hgrow="ALWAYS" />
-                                                <Label fx:id="lblBrightnessValue" prefWidth="35.0" text="0%" />
+                                                <Label fx:id="lblBrightnessValue" prefWidth="40.0" text="0%" />
                                             </children>
                                         </HBox>
 
                                         <Label text="Rotation:" GridPane.rowIndex="2" />
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                             <children>
-                                                <TextField fx:id="txtRotation" prefWidth="50.0" text="0" />
+                                                <TextField fx:id="txtRotation" prefWidth="60.0" text="0" />
                                                 <Label text="degrees" />
                                             </children>
                                         </HBox>
@@ -108,16 +116,17 @@
                                     <content>
                                         <StackPane fx:id="imageContainer" prefHeight="355.0" prefWidth="555.0">
                                             <children>
-                                                <Group> <ImageView fx:id="imagePreview" preserveRatio="true" />
+                                                <Group>
+                                                    <ImageView fx:id="imagePreview" preserveRatio="true" />
                                                 </Group>
                                             </children>
                                         </StackPane>
                                     </content>
                                 </ScrollPane>
 
-                                <HBox alignment="CENTER_RIGHT" prefHeight="65.0" prefWidth="557.0">
+                                <HBox alignment="CENTER_RIGHT" prefHeight="70.0" spacing="10.0">
                                     <children>
-                                        <Button mnemonicParsing="false" onAction="#onSaveProfile" prefHeight="39.0" prefWidth="120.0" text="Save Profile" />
+                                        <Button mnemonicParsing="false" onAction="#onSaveProfile" prefHeight="50.0" prefWidth="160.0" text="Save Profile" />
                                     </children>
                                 </HBox>
                             </children>

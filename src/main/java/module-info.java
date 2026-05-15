@@ -8,6 +8,8 @@ module dk.easv.easvexam {
     requires javafx.graphics;
     requires com.microsoft.sqlserver.jdbc;
     requires java.sql;
+    requires com.google.zxing;
+    requires com.google.zxing.javase;
     //requires dk.easv.easvexam;
 
 

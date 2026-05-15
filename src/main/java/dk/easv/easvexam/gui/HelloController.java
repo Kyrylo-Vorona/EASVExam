@@ -1,9 +1,11 @@
 package dk.easv.easvexam.gui;
 
+import dk.easv.easvexam.be.Document;
 import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.be.Profile;
 import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.bll.ApiService;
+import dk.easv.easvexam.bll.BarcodeService;
 import dk.easv.easvexam.bll.Logic;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -22,8 +24,7 @@ import javafx.util.StringConverter;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
 import java.io.ByteArrayInputStream;
@@ -44,10 +45,33 @@ public class HelloController implements Initializable {
     private ScrollPane scrollPane;
     @FXML
     private StackPane imageContainer;
+    @FXML
+    private TextField txtBoxId;
+    @FXML
+    private TreeView<String> docTreeView;
+
+    private TreeItem<String> rootItem = new TreeItem<>("Scanned Items");
     private double zoomFactor = 1.0;
     private ColorAdjust colorAdjust = new ColorAdjust();
     private User currentUser;
     private Logic logic = Logic.getInstance();
+    private Document currentDocument = new Document();
+    private List<Document> allScannedDocuments = new ArrayList<>();
+    private BarcodeService barcodeService = new BarcodeService();
+    private Map<TreeItem<String>, BufferedImage> treeImageMap = new HashMap<>();
+
+    private void showSelectedPage(TreeItem<String> selectedItem) {
+        BufferedImage bufferedImage = treeImageMap.get(selectedItem);
+        if (bufferedImage != null) {
+            javafx.scene.image.Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+            imageView.setImage(image);
+
+            double viewWidth = scrollPane.getViewportBounds().getWidth();
+            double viewHeight = scrollPane.getViewportBounds().getHeight();
+            imageView.setFitWidth(viewWidth - 10);
+            imageView.setFitHeight(viewHeight - 10);
+        }
+    }
 
     @FXML
     protected void onScanButtonClick() {
@@ -59,6 +83,33 @@ public class HelloController implements Initializable {
                     byte[] bytes = zipIn.readAllBytes();
                     BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(bytes));
                     if (bufferedImage != null) {
+                        String barcodeValue = barcodeService.detectBarcode(bufferedImage);
+
+                        if (barcodeValue != null) {
+                            if (!currentDocument.getPages().isEmpty()) {
+                                allScannedDocuments.add(currentDocument);
+                            }
+                            currentDocument = new Document();
+                            currentDocument.setBarcode(barcodeValue);
+
+                            TreeItem<String> docItem = new TreeItem<>("Document [" + barcodeValue + "]");
+                            rootItem.getChildren().add(docItem);
+
+                            TreeItem<String> pageItem = new TreeItem<>("Page " + (docItem.getChildren().size() + 1));
+                            docItem.getChildren().add(pageItem);
+                            treeImageMap.put(pageItem, bufferedImage);
+                        } else {
+                            if (rootItem.getChildren().isEmpty()) {
+                                TreeItem<String> defaultDoc = new TreeItem<>("Document [No Barcode]");
+                                rootItem.getChildren().add(defaultDoc);
+                            }
+                            TreeItem<String> lastDoc = rootItem.getChildren().get(rootItem.getChildren().size() - 1);
+                            TreeItem<String> pageItem = new TreeItem<>("Page " + (lastDoc.getChildren().size() + 1));
+                            lastDoc.getChildren().add(pageItem);
+                            treeImageMap.put(pageItem, bufferedImage);
+                        }
+
+                        currentDocument.addPage(bufferedImage);
                         javafx.scene.image.Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                         imageView.fitWidthProperty().unbind();
                         imageView.fitHeightProperty().unbind();
@@ -174,6 +225,15 @@ public class HelloController implements Initializable {
             @Override
             public Profile fromString(String string) {
                 return null;
+            }
+        });
+
+        docTreeView.setRoot(rootItem);
+        rootItem.setExpanded(true);
+        docTreeView.setShowRoot(false);
+        docTreeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && newValue.isLeaf()) {
+                showSelectedPage(newValue);
             }
         });
     }
