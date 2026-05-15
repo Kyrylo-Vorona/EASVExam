@@ -41,8 +41,6 @@ public class AdminProfileManagementController implements Initializable {
     @FXML
     private TextField txtRotation;
     @FXML
-    private CheckBox chkBarcode;
-    @FXML
     private ImageView imagePreview;
     @FXML
     private ScrollPane scrollPane;
@@ -99,7 +97,6 @@ public class AdminProfileManagementController implements Initializable {
         sliderBrightness.setValue(br);
         txtRotation.setText(String.valueOf(profile.getRotateDegrees()));
         imagePreview.setRotate(profile.getRotateDegrees());
-        chkBarcode.setSelected(profile.isSplitByBarcode());
     }
 
     private void refreshTable() {
@@ -209,7 +206,6 @@ public class AdminProfileManagementController implements Initializable {
             selectedProfile.setRotateDegrees(Integer.parseInt(txtRotation.getText()));
             int brightnessInt = (int) (sliderBrightness.getValue() * 100);
             selectedProfile.setBrightness(brightnessInt);
-            selectedProfile.setSplitByBarcode(chkBarcode.isSelected());
             logic.editProfile(selectedProfile);
             tableProfiles.refresh();
         } catch (MyException e) {

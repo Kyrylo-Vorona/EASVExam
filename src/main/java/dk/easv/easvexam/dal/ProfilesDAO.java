@@ -24,8 +24,7 @@ public class ProfilesDAO {
                         rs.getInt("id"),
                         rs.getString("profile_name"),
                         rs.getInt("rotate_degrees"),
-                        rs.getInt("brightness_adjustment"),
-                        rs.getBoolean("split_by_barcode")
+                        rs.getInt("brightness_adjustment")
                 ));
             }
         } catch (SQLException e) {
@@ -35,13 +34,12 @@ public class ProfilesDAO {
     }
 
     public void addProfile(String name, int rotateDegrees, int brightness) throws MyException {
-        String sql = "INSERT INTO Profiles (profile_name, rotate_degrees, brightness_adjustment, split_by_barcode) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Profiles (profile_name, rotate_degrees, brightness_adjustment) VALUES (?, ?, ?)";
         try (Connection con = cm.getConnection()) {
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, name);
             pstmt.setInt(2, rotateDegrees);
             pstmt.setInt(3, brightness);
-            pstmt.setBoolean(4, false);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new MyException("Database error: Could not add profile", e);
@@ -50,13 +48,12 @@ public class ProfilesDAO {
 
     public void editProfile(Profile profile) throws MyException {
         try (Connection con = cm.getConnection()) {
-            String sql = "UPDATE Profiles SET profile_name = ?, rotate_degrees = ?, brightness_adjustment = ?, split_by_barcode = ? WHERE id = ?";
+            String sql = "UPDATE Profiles SET profile_name = ?, rotate_degrees = ?, brightness_adjustment = ? WHERE id = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, profile.getName());
             pstmt.setInt(2, profile.getRotateDegrees());
             pstmt.setInt(3, profile.getBrightness());
-            pstmt.setBoolean(4, profile.isSplitByBarcode());
-            pstmt.setInt(5, profile.getId());
+            pstmt.setInt(4, profile.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new MyException("Could not edit selected profile", e);
@@ -135,9 +132,8 @@ public class ProfilesDAO {
                 String name = rs.getString("profile_name");
                 int rotation = rs.getInt("rotate_degrees");
                 int brightness = rs.getInt("brightness_adjustment");
-                boolean splitByBarcode = rs.getBoolean("split_by_barcode");
 
-                Profile profile = new Profile(id, name, rotation, brightness, splitByBarcode);
+                Profile profile = new Profile(id, name, rotation, brightness);
                 userProfiles.add(profile);
             }
         } catch (SQLException e) {

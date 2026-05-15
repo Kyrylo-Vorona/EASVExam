@@ -5,14 +5,12 @@ public class Profile {
     private String name;
     private int rotateDegrees;
     private int brightness;
-    private boolean splitByBarcode;
 
-    public Profile(int id, String name, int rotateDegrees, int brightness, boolean splitByBarcode) {
+    public Profile(int id, String name, int rotateDegrees, int brightness) {
         this.id = id;
         this.name = name;
         this.rotateDegrees = rotateDegrees;
         this.brightness = brightness;
-        this.splitByBarcode = splitByBarcode;
     }
     public int getId() {
         return id;
@@ -37,11 +35,5 @@ public class Profile {
     }
     public void setBrightness(int brightness) {
         this.brightness = brightness;
-    }
-    public boolean isSplitByBarcode() {
-        return splitByBarcode;
-    }
-    public void setSplitByBarcode(boolean splitByBarcode) {
-        this.splitByBarcode = splitByBarcode;
     }
 }
