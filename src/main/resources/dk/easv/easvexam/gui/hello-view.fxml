@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.HelloController">
 
@@ -21,7 +22,7 @@
         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: #f4f4f4;">
 
             <Button onAction="#onScanButtonClick" prefHeight="34.0" prefWidth="120.0" text="Scan Document" />
-         <ComboBox fx:id="comboProfiles" prefHeight="32.0" prefWidth="150.0" promptText="Select a profile" />
+            <ComboBox fx:id="comboProfiles" prefHeight="32.0" prefWidth="150.0" promptText="Select a profile" />
 
             <HBox alignment="CENTER_LEFT" spacing="5">
                 <Button onAction="#onRotateButtonClick" prefHeight="34.0" prefWidth="60.0" text="Rotate" />
@@ -38,7 +39,7 @@
             </ImageView>
 
             <Slider fx:id="brightnessSlider" max="1.0" min="-1.0" prefWidth="140.0" showTickLabels="false" showTickMarks="false" value="0" />
-         <TextField fx:id="txtBoxId" prefHeight="25.0" prefWidth="59.0" promptText="Box ID..." />
+            <TextField fx:id="txtBoxId" prefHeight="25.0" prefWidth="59.0" promptText="Box ID..." />
 
             <Region HBox.hgrow="ALWAYS" />
 
@@ -48,7 +49,19 @@
 
     <center>
         <SplitPane dividerPositions="0.25">
-            <TreeView fx:id="docTreeView" />
+            <VBox spacing="5.0">
+                <children>
+                    <TreeView fx:id="docTreeView" VBox.vgrow="ALWAYS" />
+                    <HBox alignment="CENTER" spacing="5.0" style="-fx-padding: 5;">
+                        <children>
+                            <Button mnemonicParsing="false" onAction="#moveSelectedUp" prefHeight="30.0" prefWidth="50.0" text="▲" />
+                            <Button mnemonicParsing="false" onAction="#moveSelectedDown" prefHeight="30.0" prefWidth="50.0" text="▼" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button mnemonicParsing="false" onAction="#deleteSelected" prefHeight="30.0" prefWidth="70.0" text="Delete" />
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
 
             <ScrollPane fx:id="scrollPane" fitToHeight="false" fitToWidth="false" pannable="true" style="-fx-background-color: #d3d3d3;">
                 <content>

@@ -241,4 +241,43 @@ public class HelloController implements Initializable {
     private void applyBrightness(double value) {
         colorAdjust.setBrightness(value);
     }
+
+    @FXML
+    private void moveSelectedUp() {
+        TreeItem<String> selected = docTreeView.getSelectionModel().getSelectedItem();
+        if (selected != null && selected.getParent() != null) {
+            TreeItem<String> parent = selected.getParent();
+            int index = parent.getChildren().indexOf(selected);
+            if (index > 0) {
+                parent.getChildren().remove(selected);
+                parent.getChildren().add(index - 1, selected);
+                docTreeView.getSelectionModel().select(selected);
+            }
+        }
+    }
+
+    @FXML
+    private void moveSelectedDown() {
+        TreeItem<String> selected = docTreeView.getSelectionModel().getSelectedItem();
+        if (selected != null && selected.getParent() != null) {
+            TreeItem<String> parent = selected.getParent();
+            int index = parent.getChildren().indexOf(selected);
+            if (index >= 0 && index < parent.getChildren().size() - 1) {
+                parent.getChildren().remove(selected);
+                parent.getChildren().add(index + 1, selected);
+                docTreeView.getSelectionModel().select(selected);
+            }
+        }
+    }
+
+    @FXML
+    private void deleteSelected() {
+        TreeItem<String> selected = docTreeView.getSelectionModel().getSelectedItem();
+        if (selected != null && selected.getParent() != null) {
+            TreeItem<String> parent = selected.getParent();
+            parent.getChildren().remove(selected);
+            treeImageMap.remove(selected);
+            imageView.setImage(null);
+        }
+    }
 }
