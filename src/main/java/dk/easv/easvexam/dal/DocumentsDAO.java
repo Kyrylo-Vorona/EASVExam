@@ -1,0 +1,51 @@
+package dk.easv.easvexam.dal;
+
+import dk.easv.easvexam.be.MyException;
+
+import java.sql.*;
+import java.util.List;
+
+public class DocumentsDAO {
+    private final ConnectionManager cm;
+    public DocumentsDAO() { cm  = new ConnectionManager(); }
+
+    public void saveDocumentToDb(String boxId, String client, String caseName, int profileId, int userId, String status, List<String> filePaths) throws MyException {
+        String insertDocSql = "INSERT INTO Documents (box_id, client, [case], profile_id, created_by, status, created_at) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+        String insertFileSql = "INSERT INTO Files (document_id, file_path) VALUES (?, ?)";
+
+        try (Connection con = cm.getConnection()) {
+            con.setAutoCommit(false);
+
+            try (PreparedStatement stmtDoc = con.prepareStatement(insertDocSql, Statement.RETURN_GENERATED_KEYS)) {
+                stmtDoc.setString(1, boxId);
+                stmtDoc.setString(2, client);
+                stmtDoc.setString(3, caseName);
+                stmtDoc.setInt(4, profileId);
+                stmtDoc.setInt(5, userId);
+                stmtDoc.setString(6, status);
+                stmtDoc.executeUpdate();
+
+                try (ResultSet generatedKeys = stmtDoc.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int documentId = generatedKeys.getInt(1);
+
+                        try (PreparedStatement stmtFile = con.prepareStatement(insertFileSql)) {
+                            for (String path : filePaths) {
+                                stmtFile.setInt(1, documentId);
+                                stmtFile.setString(2, path);
+                                stmtFile.addBatch();
+                            }
+                            stmtFile.executeBatch();
+                        }
+                    }
+                }
+                con.commit();
+            } catch (SQLException e) {
+                con.rollback();
+                throw new MyException("Database error during export: ", e);
+            }
+        } catch (SQLException e) {
+            throw new MyException("Database connection error: ", e);
+        }
+    }
+}

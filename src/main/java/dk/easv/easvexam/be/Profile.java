@@ -36,4 +36,8 @@ public class Profile {
     public void setBrightness(int brightness) {
         this.brightness = brightness;
     }
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

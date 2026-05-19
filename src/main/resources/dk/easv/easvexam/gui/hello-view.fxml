@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.CheckBox?>
 <BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.HelloController">
 
     <top>
@@ -39,7 +40,12 @@
             </ImageView>
 
             <Slider fx:id="brightnessSlider" max="1.0" min="-1.0" prefWidth="140.0" showTickLabels="false" showTickMarks="false" value="0" />
-            <TextField fx:id="txtBoxId" prefHeight="25.0" prefWidth="59.0" promptText="Box ID..." />
+            <TextField fx:id="txtBoxId" prefHeight="34.0" prefWidth="59.0" promptText="Box ID..." />
+            <TextField fx:id="txtClient" prefHeight="34.0" prefWidth="59.0" promptText="Client" />
+            <TextField fx:id="txtCase" prefHeight="34.0" prefWidth="59.0" promptText="Case" />
+            <ComboBox fx:id="comboStatus" prefHeight="34.0" prefWidth="150.0" promptText="" />
+            <CheckBox fx:id="chkMultiPage" text="Multi-page TIFF" />
+            <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="75.0" onAction="#onExportButtonClick" text="Export" />
 
             <Region HBox.hgrow="ALWAYS" />
 
@@ -56,8 +62,8 @@
                         <children>
                             <Button mnemonicParsing="false" onAction="#moveSelectedUp" prefHeight="30.0" prefWidth="50.0" text="▲" />
                             <Button mnemonicParsing="false" onAction="#moveSelectedDown" prefHeight="30.0" prefWidth="50.0" text="▼" />
-                            <Region HBox.hgrow="ALWAYS" />
                             <Button mnemonicParsing="false" onAction="#deleteSelected" prefHeight="30.0" prefWidth="70.0" text="Delete" />
+                            <Region HBox.hgrow="ALWAYS" />
                         </children>
                     </HBox>
                 </children>

@@ -4,6 +4,7 @@ public class DALManager {
     private static DALManager instance;
     private UsersDAO usersDAO;
     private ProfilesDAO profilesDAO;
+    private DocumentsDAO documentsDAO;
 
     public static DALManager getInstance() {
         if (instance == null) {
@@ -26,5 +27,10 @@ public class DALManager {
     public ProfilesDAO getProfilesDAO() {
         if (profilesDAO == null) profilesDAO = new ProfilesDAO();
         return profilesDAO;
+    }
+
+    public DocumentsDAO getDocumentsDAO() {
+        if (documentsDAO == null) documentsDAO = new DocumentsDAO();
+        return documentsDAO;
     }
 }

@@ -22,12 +22,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
 
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
-import java.io.ByteArrayInputStream;
 
 import javax.imageio.ImageIO;
 import java.io.InputStream;
@@ -47,6 +46,14 @@ public class HelloController implements Initializable {
     private StackPane imageContainer;
     @FXML
     private TextField txtBoxId;
+    @FXML
+    private TextField txtClient;
+    @FXML
+    private TextField txtCase;
+    @FXML
+    private CheckBox chkMultiPage;
+    @FXML
+    private ComboBox<String> comboStatus;
     @FXML
     private TreeView<String> docTreeView;
 
@@ -217,16 +224,6 @@ public class HelloController implements Initializable {
         brightnessSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             applyBrightness(newValue.doubleValue());
         });
-        comboProfiles.setConverter(new StringConverter<Profile>() {
-            @Override
-            public String toString(Profile profile) {
-                return (profile == null) ? "" : profile.getName();
-            }
-            @Override
-            public Profile fromString(String string) {
-                return null;
-            }
-        });
 
         docTreeView.setRoot(rootItem);
         rootItem.setExpanded(true);
@@ -236,6 +233,9 @@ public class HelloController implements Initializable {
                 showSelectedPage(newValue);
             }
         });
+
+        comboStatus.setItems(FXCollections.observableArrayList("In Progress", "Waiting for QA", "Completed"));
+        comboStatus.setValue("In Progress");
     }
 
     private void applyBrightness(double value) {
@@ -278,6 +278,60 @@ public class HelloController implements Initializable {
             parent.getChildren().remove(selected);
             treeImageMap.remove(selected);
             imageView.setImage(null);
+        }
+    }
+
+    @FXML
+    private void onExportButtonClick() {
+        String boxId = txtBoxId.getText().trim();
+        String client = txtClient.getText().trim();
+        String caseName = txtCase.getText().trim();
+        Profile selectedProfile = comboProfiles.getValue();
+        String currentStatus = comboStatus.getValue();
+
+        if (boxId.isEmpty() || client.isEmpty() || caseName.isEmpty() || selectedProfile == null || currentUser == null) {
+            System.err.println("Error: Missing required fields for export (Box ID, Client, Case, Profile or User)!");
+            return;
+        }
+
+        try {
+            File exportFolder = new File("Export");
+            File clientFolder = new File(exportFolder, client);
+            File caseFolder = new File(clientFolder, caseName);
+            File boxFolder = new File(caseFolder, "Export_" + boxId);
+
+            if (!boxFolder.exists()) {
+                boxFolder.mkdirs();
+            }
+
+            for (TreeItem<String> docNode : rootItem.getChildren()) {
+                String docName = docNode.getValue();
+                String cleanDocName = docName.replace("Document [", "").replace("]", "").replace(" ", "_");
+                String folderName = selectedProfile.getName() + "_" + boxId + "_" + cleanDocName;
+
+                File docFolder = new File(boxFolder, folderName);
+                if (!docFolder.exists()) docFolder.mkdir();
+
+                List<String> savedFilePaths = new ArrayList<>();
+                int pageIndex = 1;
+
+                for (TreeItem<String> pageNode : docNode.getChildren()) {
+                    BufferedImage img = treeImageMap.get(pageNode);
+                    if (img != null) {
+                        File pageFile = new File(docFolder, "Page_" + pageIndex + ".png");
+                        ImageIO.write(img, "png", pageFile);
+                        savedFilePaths.add(pageFile.getPath());
+                        pageIndex++;
+                    }
+                }
+
+                logic.saveDocumentToDb(boxId, client, caseName, selectedProfile.getId(), currentUser.getId(), currentStatus, savedFilePaths);
+            }
+            System.out.println("Export with structured Client/Case metadata completed successfully!");
+
+        } catch (Exception e) {
+            System.err.println("Export failed: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
