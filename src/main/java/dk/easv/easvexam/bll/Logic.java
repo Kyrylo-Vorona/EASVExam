@@ -61,6 +61,10 @@ public class Logic {
         DALManager.getInstance().getDocumentsDAO().saveDocumentToDb(boxId, client, caseName,profileId, userId, status, filePaths);
     }
 
+    public void logActivity(int userId, String action) throws MyException {
+        DALManager.getInstance().getDocumentsDAO().logActivity(userId, action);
+    }
+
     public List<User> getAllUsers() throws MyException {
         return DALManager.getInstance().getUsersDAO().getAllUsers();
     }

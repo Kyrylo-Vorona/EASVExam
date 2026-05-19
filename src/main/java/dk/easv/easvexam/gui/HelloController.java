@@ -12,23 +12,30 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javax.imageio.IIOImage;
 import javafx.util.StringConverter;
 
+import java.awt.image.RescaleOp;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 import java.io.InputStream;
 
 public class HelloController implements Initializable {
@@ -281,6 +288,56 @@ public class HelloController implements Initializable {
         }
     }
 
+    private BufferedImage applyProfileTransformations(BufferedImage src, double rotateDegrees, double brightnessValue) {
+        if (src == null) return null;
+        int w = src.getWidth();
+        int h = src.getHeight();
+        double absDegrees = Math.abs(rotateDegrees % 360);
+        boolean isSwapped = (absDegrees == 90 || absDegrees == 270);
+        int newW = isSwapped ? h : w;
+        int newH = isSwapped ? w : h;
+        BufferedImage modified = new BufferedImage(newW, newH, src.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : src.getType());
+        Graphics2D g2d = modified.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2d.translate(newW / 2.0, newH / 2.0);
+        g2d.rotate(Math.toRadians(rotateDegrees));
+        g2d.translate(-w / 2.0, -h / 2.0);
+        g2d.drawImage(src, 0, 0, null);
+        g2d.dispose();
+
+        if (brightnessValue != 0.0) {
+            float offset = (float) (brightnessValue * 255.0);
+            RescaleOp rescaleOp = new RescaleOp(1.0f, offset, null);
+            try {
+                modified = rescaleOp.filter(modified, null);
+            } catch (Exception e) {
+                System.err.println("Brightness filter warning: " + e.getMessage());
+            }
+        }
+        return modified;
+    }
+
+    private void saveMultiPageTiff(List<BufferedImage> images, File outputFile) throws Exception {
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("TIFF");
+        if (!writers.hasNext()) {
+            throw new RuntimeException("TIFF Writer not found in this JVM!");
+        }
+
+        ImageWriter writer = writers.next();
+        try (javax.imageio.stream.ImageOutputStream ios = ImageIO.createImageOutputStream(outputFile)) {
+            writer.setOutput(ios);
+            writer.prepareWriteSequence(null);
+
+            for (BufferedImage img : images) {
+                writer.writeToSequence(new IIOImage(img, null, null), null);
+            }
+            writer.endWriteSequence();
+        } finally {
+            writer.dispose();
+        }
+    }
+
     @FXML
     private void onExportButtonClick() {
         String boxId = txtBoxId.getText().trim();
@@ -288,44 +345,59 @@ public class HelloController implements Initializable {
         String caseName = txtCase.getText().trim();
         Profile selectedProfile = comboProfiles.getValue();
         String currentStatus = comboStatus.getValue();
-
         if (boxId.isEmpty() || client.isEmpty() || caseName.isEmpty() || selectedProfile == null || currentUser == null) {
             System.err.println("Error: Missing required fields for export (Box ID, Client, Case, Profile or User)!");
             return;
         }
-
         try {
             File exportFolder = new File("Export");
             File clientFolder = new File(exportFolder, client);
             File caseFolder = new File(clientFolder, caseName);
             File boxFolder = new File(caseFolder, "Export_" + boxId);
-
             if (!boxFolder.exists()) {
                 boxFolder.mkdirs();
             }
-
+            double currentRotation = imageView.getRotate();
+            double currentBrightness = brightnessSlider.getValue();
             for (TreeItem<String> docNode : rootItem.getChildren()) {
                 String docName = docNode.getValue();
                 String cleanDocName = docName.replace("Document [", "").replace("]", "").replace(" ", "_");
-                String folderName = selectedProfile.getName() + "_" + boxId + "_" + cleanDocName;
-
-                File docFolder = new File(boxFolder, folderName);
-                if (!docFolder.exists()) docFolder.mkdir();
-
+                String baseDocumentName = selectedProfile.getName() + "_" + boxId + "_" + cleanDocName;
                 List<String> savedFilePaths = new ArrayList<>();
-                int pageIndex = 1;
-
+                List<BufferedImage> docImages = new ArrayList<>();
                 for (TreeItem<String> pageNode : docNode.getChildren()) {
-                    BufferedImage img = treeImageMap.get(pageNode);
-                    if (img != null) {
-                        File pageFile = new File(docFolder, "Page_" + pageIndex + ".png");
-                        ImageIO.write(img, "png", pageFile);
+                    BufferedImage rawImg = treeImageMap.get(pageNode);
+                    if (rawImg != null) {
+                        BufferedImage affectedImg = applyProfileTransformations(rawImg, currentRotation, currentBrightness);
+                        docImages.add(affectedImg);
+                    }
+                }
+                if (docImages.isEmpty()) {
+                    continue;
+                }
+                if (chkMultiPage.isSelected()) {
+                    File tiffFile = new File(boxFolder, baseDocumentName + ".tiff");
+                    saveMultiPageTiff(docImages, tiffFile);
+                    savedFilePaths.add(tiffFile.getPath());
+                } else {
+                    File docFolder = new File(boxFolder, baseDocumentName);
+                    if (!docFolder.exists()) {
+                        docFolder.mkdir();
+                    }
+                    int pageIndex = 1;
+                    for (BufferedImage img : docImages) {
+                        File pageFile = new File(docFolder, "Page_" + pageIndex + ".tiff");
+                        ImageIO.write(img, "TIFF", pageFile);
                         savedFilePaths.add(pageFile.getPath());
                         pageIndex++;
                     }
                 }
-
-                logic.saveDocumentToDb(boxId, client, caseName, selectedProfile.getId(), currentUser.getId(), currentStatus, savedFilePaths);
+                try {
+                    logic.saveDocumentToDb(boxId, client, caseName, selectedProfile.getId(), currentUser.getId(), currentStatus, savedFilePaths);
+                    logic.logActivity(currentUser.getId(), "Exported Document: " + baseDocumentName);
+                } catch (Exception dbEx) {
+                    System.err.println("Database save failed: " + dbEx.getMessage());
+                }
             }
             System.out.println("Export with structured Client/Case metadata completed successfully!");
 

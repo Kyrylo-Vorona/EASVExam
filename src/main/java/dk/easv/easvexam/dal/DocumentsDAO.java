@@ -48,4 +48,16 @@ public class DocumentsDAO {
             throw new MyException("Database connection error: ", e);
         }
     }
+
+    public void logActivity(int userId, String action) throws MyException {
+        String sql = "INSERT INTO ActivityLogs (user_id, action, timestamp) VALUES (?, ?, CURRENT_TIMESTAMP)";
+        try (Connection con = cm.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setString(2, action);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new MyException("Failed to save log to DB: ", e);
+        }
+    }
 }
