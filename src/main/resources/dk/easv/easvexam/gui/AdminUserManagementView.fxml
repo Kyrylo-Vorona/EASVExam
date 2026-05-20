@@ -48,6 +48,7 @@
                     <children>
                         <Button mnemonicParsing="false" onAction="#openAddUser" prefHeight="33.0" prefWidth="120.0" text="Add User" />
                         <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#openLogging" prefHeight="31.0" prefWidth="88.0" text="Logs" />
                         <Button mnemonicParsing="false" onAction="#openProfileManagement" prefHeight="33.0" prefWidth="180.0" text="Profile management" />
                     </children>
                 </HBox>

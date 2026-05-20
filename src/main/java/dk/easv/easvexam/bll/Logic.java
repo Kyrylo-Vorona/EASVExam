@@ -1,5 +1,6 @@
 package dk.easv.easvexam.bll;
 
+import dk.easv.easvexam.be.ActivityLog;
 import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.be.Profile;
 import dk.easv.easvexam.be.User;
@@ -83,5 +84,9 @@ public class Logic {
 
     public List<Integer> getUserIdsForProfile(int profileId) throws MyException {
         return DALManager.getInstance().getProfilesDAO().getUserIdsForProfile(profileId);
+    }
+
+    public List<ActivityLog> getAllLogs() throws MyException {
+        return DALManager.getInstance().getDocumentsDAO().getAllLogs();
     }
 }

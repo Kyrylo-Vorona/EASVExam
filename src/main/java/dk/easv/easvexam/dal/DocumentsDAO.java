@@ -1,8 +1,10 @@
 package dk.easv.easvexam.dal;
 
+import dk.easv.easvexam.be.ActivityLog;
 import dk.easv.easvexam.be.MyException;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentsDAO {
@@ -59,5 +61,28 @@ public class DocumentsDAO {
         } catch (SQLException e) {
             throw new MyException("Failed to save log to DB: ", e);
         }
+    }
+
+    public List<ActivityLog> getAllLogs() throws MyException {
+        List<ActivityLog> logs = new ArrayList<>();
+        String sql = "SELECT l.id, u.username, l.action, l.timestamp FROM ActivityLogs l JOIN Users u ON l.user_id = u.id ORDER BY l.timestamp DESC";
+
+        try (Connection con = cm.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                ActivityLog log = new ActivityLog(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("action"),
+                        rs.getTimestamp("timestamp")
+                );
+                logs.add(log);
+            }
+        } catch (SQLException e) {
+            throw new MyException("Failed to load logs: ", e);
+        }
+        return logs;
     }
 }

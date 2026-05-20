@@ -121,6 +121,7 @@ public class HelloController implements Initializable {
                             TreeItem<String> pageItem = new TreeItem<>("Page " + (lastDoc.getChildren().size() + 1));
                             lastDoc.getChildren().add(pageItem);
                             treeImageMap.put(pageItem, bufferedImage);
+                            logic.logActivity(currentUser.getId(), "Scanned a new document page from API.");
                         }
 
                         currentDocument.addPage(bufferedImage);
@@ -284,6 +285,7 @@ public class HelloController implements Initializable {
             TreeItem<String> parent = selected.getParent();
             parent.getChildren().remove(selected);
             treeImageMap.remove(selected);
+            logic.logActivity(currentUser.getId(), "Deleted item: " + selected.getValue());
             imageView.setImage(null);
         }
     }

@@ -155,4 +155,14 @@ public class AdminController implements Initializable {
             OpenView.showErrorAlert(e.getMessage());
         }
     }
+
+    @FXML
+    public void openLogging(ActionEvent event) {
+        try {
+            String filepath = "/dk/easv/easvexam/gui/LoggingView.fxml";
+            OpenView.getInstance().openView(filepath, event);
+        } catch (MyException e) {
+            OpenView.showErrorAlert(e.getMessage());
+        }
+    }
 }
