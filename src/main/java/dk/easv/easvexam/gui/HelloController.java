@@ -171,8 +171,34 @@ public class HelloController implements Initializable {
     private void loadUserProfiles() {
         try {
             if (currentUser != null) {
-                List profiles = logic.getProfilesForUser(currentUser.getId());
-                comboProfiles.setItems(FXCollections.observableArrayList(profiles));
+                List<Profile> userProfiles = logic.getProfilesForUser(currentUser.getId());
+                int standardProfileId = 11;
+                boolean hasStandard = false;
+                for (Profile p : userProfiles) {
+                    if (p.getId() == standardProfileId) {
+                        hasStandard = true;
+                        break;
+                    }
+                }
+                if (!hasStandard) {
+                    List<Profile> allProfiles = logic.getAllProfiles();
+                    for (Profile p : allProfiles) {
+                        if (p.getId() == standardProfileId) {
+                            userProfiles.add(p);
+                            break;
+                        }
+                    }
+                }
+                comboProfiles.setItems(FXCollections.observableArrayList(userProfiles));
+                for (Profile p : comboProfiles.getItems()) {
+                    if (p.getId() == standardProfileId) {
+                        comboProfiles.getSelectionModel().select(p);
+                        break;
+                    }
+                }
+                if (comboProfiles.getSelectionModel().getSelectedItem() == null && !comboProfiles.getItems().isEmpty()) {
+                    comboProfiles.getSelectionModel().selectFirst();
+                }
             }
         } catch (MyException e) {
             OpenView.showErrorAlert("Could not load profiles: " + e.getMessage());
@@ -364,7 +390,8 @@ public class HelloController implements Initializable {
             for (TreeItem<String> docNode : rootItem.getChildren()) {
                 String docName = docNode.getValue();
                 String cleanDocName = docName.replace("Document [", "").replace("]", "").replace(" ", "_");
-                String baseDocumentName = selectedProfile.getName() + "_" + boxId + "_" + cleanDocName;
+                String cleanProfileName = selectedProfile.getName().replace(" ", "_");
+                String baseDocumentName = cleanProfileName + "_" + boxId + "_" + cleanDocName;
                 List<String> savedFilePaths = new ArrayList<>();
                 List<BufferedImage> docImages = new ArrayList<>();
                 for (TreeItem<String> pageNode : docNode.getChildren()) {

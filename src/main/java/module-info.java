@@ -10,8 +10,7 @@ module dk.easv.easvexam {
     requires java.sql;
     requires com.google.zxing;
     requires com.google.zxing.javase;
-    //requires dk.easv.easvexam;
-    //requires dk.easv.easvexam;
+
 
 
     opens dk.easv.easvexam to javafx.fxml;
