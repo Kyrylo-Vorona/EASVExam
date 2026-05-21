@@ -7,11 +7,14 @@ import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.bll.ApiService;
 import dk.easv.easvexam.bll.BarcodeService;
 import dk.easv.easvexam.bll.Logic;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
@@ -19,8 +22,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
 import java.awt.*;
+import javafx.scene.input.KeyEvent;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javax.imageio.IIOImage;
@@ -37,6 +42,10 @@ import java.util.zip.ZipEntry;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import java.io.InputStream;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
+
+import static javax.swing.SwingConstants.LEFT;
 
 public class HelloController implements Initializable {
     @FXML
@@ -63,6 +72,8 @@ public class HelloController implements Initializable {
     private ComboBox<String> comboStatus;
     @FXML
     private TreeView<String> docTreeView;
+    @FXML
+    private Label lblStatus;
 
     private TreeItem<String> rootItem = new TreeItem<>("Scanned Items");
     private double zoomFactor = 1.0;
@@ -270,6 +281,7 @@ public class HelloController implements Initializable {
 
         comboStatus.setItems(FXCollections.observableArrayList("In Progress", "Waiting for QA", "Completed"));
         comboStatus.setValue("In Progress");
+        Platform.runLater(this::initKeyboardShortcuts);
     }
 
     private void applyBrightness(double value) {
@@ -424,6 +436,7 @@ public class HelloController implements Initializable {
                 try {
                     logic.saveDocumentToDb(boxId, client, caseName, selectedProfile.getId(), currentUser.getId(), currentStatus, savedFilePaths);
                     logic.logActivity(currentUser.getId(), "Exported Document: " + baseDocumentName);
+                    showSuccessNotification("Export completed successfully!");
                 } catch (Exception dbEx) {
                     System.err.println("Database save failed: " + dbEx.getMessage());
                 }
@@ -434,5 +447,78 @@ public class HelloController implements Initializable {
             System.err.println("Export failed: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void initKeyboardShortcuts() {
+        Scene scene = docTreeView.getScene();
+        if (scene == null) return;
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
+            boolean isCtrlDown = event.isControlDown() || event.isMetaDown();
+
+            if (isCtrlDown && event.getCode() == KeyCode.S) {
+                onScanButtonClick();
+                event.consume();
+            }
+
+            else if (isCtrlDown && event.getCode() == KeyCode.E) {
+                onExportButtonClick();
+                event.consume();
+            }
+
+            else if (isCtrlDown && (event.getCode() == KeyCode.EQUALS || event.getCode() == KeyCode.PLUS)) {
+                onZoomIn();
+                scrollPane.requestFocus();
+                event.consume();
+            }
+
+            else if (isCtrlDown && event.getCode() == KeyCode.MINUS) {
+                onZoomOut();
+                scrollPane.requestFocus();
+                event.consume();
+            }
+            double minSlider = brightnessSlider.getMin();
+            double maxSlider = brightnessSlider.getMax();
+            double step = (maxSlider - minSlider) * 0.05;
+            if (isCtrlDown && event.getCode() == KeyCode.M) {
+                double current = brightnessSlider.getValue();
+                brightnessSlider.setValue(Math.min(maxSlider, current + step));
+                event.consume();
+            }
+            else if (isCtrlDown && event.getCode() == KeyCode.L) {
+                double current = brightnessSlider.getValue();
+                brightnessSlider.setValue(Math.max(minSlider, current - step));
+                event.consume();
+            }
+        });
+
+        scrollPane.setOnKeyPressed((KeyEvent event) -> {
+            double scrollStep = 0.05;
+            if (event.getCode() == KeyCode.DOWN) {
+                scrollPane.setVvalue(scrollPane.getVvalue() + scrollStep);
+                event.consume();
+            } else if (event.getCode() == KeyCode.UP) {
+                scrollPane.setVvalue(scrollPane.getVvalue() - scrollStep);
+                event.consume();
+            } else if (event.getCode() == KeyCode.RIGHT) {
+                scrollPane.setHvalue(scrollPane.getHvalue() + scrollStep);
+                event.consume();
+            } else if (event.getCode() == KeyCode.LEFT) {
+                scrollPane.setHvalue(scrollPane.getHvalue() - scrollStep);
+                event.consume();
+            }
+        });
+    }
+
+    private void showSuccessNotification(String message) {
+        lblStatus.setText(message);
+        lblStatus.setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 0 15 0 0;");
+        lblStatus.setOpacity(1.0);
+        FadeTransition fade = new FadeTransition(Duration.seconds(1), lblStatus);
+        fade.setFromValue(1.0);
+        fade.setToValue(0.0);
+        fade.setDelay(Duration.seconds(4));
+        fade.setOnFinished(e -> lblStatus.setText(""));
+        fade.play();
     }
 }
