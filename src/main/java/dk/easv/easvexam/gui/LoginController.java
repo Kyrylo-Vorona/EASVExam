@@ -25,8 +25,8 @@ public class LoginController {
                     String filepath = "/dk/easv/easvexam/gui/AdminUserManagementView.fxml";
                     OpenView.getInstance().openView(filepath, event);
                 } else {
-                    FXMLLoader loader = OpenView.getInstance().openView("/dk/easv/easvexam/gui/hello-view.fxml", event);
-                    HelloController controller = loader.getController();
+                    FXMLLoader loader = OpenView.getInstance().openView("/dk/easv/easvexam/gui/UserView.fxml", event);
+                    UserController controller = loader.getController();
                     controller.setUser(loggedInUser);
                 }
             } else {

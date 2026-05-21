@@ -4,6 +4,7 @@ import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.be.Profile;
 import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.bll.Logic;
+import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -44,6 +46,8 @@ public class AdminProfileManagementController implements Initializable {
     private ImageView imagePreview;
     @FXML
     private ScrollPane scrollPane;
+    @FXML
+    private Label lblStatus;
 
     private Logic logic = Logic.getInstance();
     private ObservableList<Profile> profileObservableList = FXCollections.observableArrayList();
@@ -207,11 +211,24 @@ public class AdminProfileManagementController implements Initializable {
             int brightnessInt = (int) (sliderBrightness.getValue() * 100);
             selectedProfile.setBrightness(brightnessInt);
             logic.editProfile(selectedProfile);
+            showSuccessNotification("Profile has been saved successfully!");
             tableProfiles.refresh();
         } catch (MyException e) {
             OpenView.showErrorAlert(e.getMessage());
         } catch (NumberFormatException e) {
             OpenView.showErrorAlert("Rotation must be a number!");
         }
+    }
+
+    private void showSuccessNotification(String message) {
+        lblStatus.setText(message);
+        lblStatus.setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold; -fx-font-size: 18px; -fx-padding: 0 15 0 0;");
+        lblStatus.setOpacity(1.0);
+        FadeTransition fade = new FadeTransition(Duration.seconds(1), lblStatus);
+        fade.setFromValue(1.0);
+        fade.setToValue(0.0);
+        fade.setDelay(Duration.seconds(4));
+        fade.setOnFinished(e -> lblStatus.setText(""));
+        fade.play();
     }
 }

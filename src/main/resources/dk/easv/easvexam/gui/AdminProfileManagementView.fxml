@@ -27,13 +27,13 @@
     <children>
         <HBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="1001.0" spacing="15.0" style="-fx-padding: 10; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;">
             <children>
-                <Button mnemonicParsing="false" onAction="#openUserManagement" prefHeight="50.0" prefWidth="160.0" text="User Management" />
+                <Button mnemonicParsing="false" onAction="#openUserManagement" prefHeight="40.0" prefWidth="137.0" text="User Management" />
                 <Separator orientation="VERTICAL" />
                 <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Profile Management" />
                 <Region HBox.hgrow="ALWAYS" />
-                <Button mnemonicParsing="false" onAction="#logOut" prefHeight="50.0" prefWidth="160.0" text="Log out">
+                <Button mnemonicParsing="false" onAction="#logOut" prefHeight="40.0" prefWidth="119.0" text="Log out">
                <font>
-                  <Font size="18.0" />
+                  <Font size="16.0" />
                </font></Button>
             </children>
         </HBox>
@@ -60,7 +60,7 @@
                                 </TableView>
                                 <HBox alignment="CENTER_LEFT">
                                     <children>
-                                        <Button mnemonicParsing="false" onAction="#onAddNewProfile" prefHeight="50.0" prefWidth="160.0" text="Add New Profile" />
+                                        <Button mnemonicParsing="false" onAction="#onAddNewProfile" prefHeight="40.0" prefWidth="130.0" text="Add New Profile" />
                                     </children>
                                 </HBox>
                             </children>
@@ -124,9 +124,15 @@
                                     </content>
                                 </ScrollPane>
 
-                                <HBox alignment="CENTER_RIGHT" prefHeight="70.0" spacing="10.0">
+                                <HBox alignment="CENTER_RIGHT" prefHeight="51.0" prefWidth="617.0" spacing="10.0">
                                     <children>
-                                        <Button mnemonicParsing="false" onAction="#onSaveProfile" prefHeight="50.0" prefWidth="160.0" text="Save Profile" />
+                                      <Label fx:id="lblStatus" prefHeight="38.0" prefWidth="334.0">
+                                         <font>
+                                            <Font size="18.0" />
+                                         </font>
+                                      </Label>
+                                      <Region prefHeight="44.0" prefWidth="188.0" HBox.hgrow="ALWAYS" />
+                                        <Button mnemonicParsing="false" onAction="#onSaveProfile" prefHeight="43.0" prefWidth="120.0" text="Save Profile" />
                                     </children>
                                 </HBox>
                             </children>

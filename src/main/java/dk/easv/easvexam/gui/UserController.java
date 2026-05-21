@@ -18,7 +18,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -29,7 +28,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javax.imageio.IIOImage;
-import javafx.util.StringConverter;
 
 import java.awt.image.RescaleOp;
 import java.io.*;
@@ -39,15 +37,12 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
 
-import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import java.io.InputStream;
 import javafx.animation.FadeTransition;
 import javafx.util.Duration;
 
-import static javax.swing.SwingConstants.LEFT;
-
-public class HelloController implements Initializable {
+public class UserController implements Initializable {
     @FXML
     private Slider brightnessSlider;
     @FXML
@@ -162,15 +157,14 @@ public class HelloController implements Initializable {
                         scrollPane.setVvalue(0.0);
                         scrollPane.setHvalue(0.0);
                     } else {
-                        System.err.println("Error: file inside of ZIP is not an image or crashed");
+                        OpenView.showErrorAlert("Error: file inside of ZIP is not an image or crashed");
                     }
                 } else {
-                    System.err.println("Error: ZIP-Archive is empty");
+                    OpenView.showErrorAlert("Error: ZIP-Archive is empty");
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error " + e.getMessage());
-            e.printStackTrace();
+            OpenView.showErrorAlert("Error: " + e);
         }
     }
 
@@ -352,7 +346,7 @@ public class HelloController implements Initializable {
             try {
                 modified = rescaleOp.filter(modified, null);
             } catch (Exception e) {
-                System.err.println("Brightness filter warning: " + e.getMessage());
+                OpenView.showErrorAlert("Brightness filter warning: " + e.getMessage());
             }
         }
         return modified;
@@ -361,7 +355,7 @@ public class HelloController implements Initializable {
     private void saveMultiPageTiff(List<BufferedImage> images, File outputFile) throws Exception {
         Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("TIFF");
         if (!writers.hasNext()) {
-            throw new RuntimeException("TIFF Writer not found in this JVM!");
+            throw new MyException("TIFF Writer not found in this JVM!", null);
         }
 
         ImageWriter writer = writers.next();
@@ -386,7 +380,7 @@ public class HelloController implements Initializable {
         Profile selectedProfile = comboProfiles.getValue();
         String currentStatus = comboStatus.getValue();
         if (boxId.isEmpty() || client.isEmpty() || caseName.isEmpty() || selectedProfile == null || currentUser == null) {
-            System.err.println("Error: Missing required fields for export (Box ID, Client, Case, Profile or User)!");
+            OpenView.showErrorAlert("Error: Missing required fields for export (Box ID, Client, Case or Profile)!");
             return;
         }
         try {
@@ -438,14 +432,12 @@ public class HelloController implements Initializable {
                     logic.logActivity(currentUser.getId(), "Exported Document: " + baseDocumentName);
                     showSuccessNotification("Export completed successfully!");
                 } catch (Exception dbEx) {
-                    System.err.println("Database save failed: " + dbEx.getMessage());
+                    OpenView.showErrorAlert("Database save failed: " + dbEx.getMessage());
                 }
             }
-            System.out.println("Export with structured Client/Case metadata completed successfully!");
 
         } catch (Exception e) {
-            System.err.println("Export failed: " + e.getMessage());
-            e.printStackTrace();
+            OpenView.showErrorAlert("Wrong username or password" + e);
         }
     }
 

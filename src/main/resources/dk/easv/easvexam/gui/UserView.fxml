@@ -18,7 +18,7 @@
 
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.HelloController">
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.UserController">
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: #f4f4f4;">
