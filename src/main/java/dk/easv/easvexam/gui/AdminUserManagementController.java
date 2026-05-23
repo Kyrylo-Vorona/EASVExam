@@ -1,30 +1,27 @@
 package dk.easv.easvexam.gui;
 
 import dk.easv.easvexam.be.MyException;
-import dk.easv.easvexam.be.Profile;
 import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.bll.Logic;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class AdminController implements Initializable {
+public class AdminUserManagementController implements Initializable {
     @FXML
     private TableColumn<User, String> usernameColumn;
     @FXML
@@ -33,6 +30,8 @@ public class AdminController implements Initializable {
     private TableColumn<User, Void> colActions;
     @FXML
     private TableColumn<User, String> profilesColumn;
+    @FXML
+    private TextField searchUserField;
     @FXML
     private TableView<User> userTable;
     private ObservableList<User> userList;
@@ -65,6 +64,25 @@ public class AdminController implements Initializable {
         userList.addAll(logic.getAllUsers());
         userProfilesMap = logic.getUsersProfilesMap();
         userTable.setItems(userList);
+        usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+        roleColumn.setCellValueFactory(new PropertyValueFactory<>("role"));
+        setupProfilesColumn();
+        FilteredList<User> filteredData = new FilteredList<>(userList, p -> true);
+        searchUserField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(user -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase().trim();
+                if (user.getUsername() != null && user.getUsername().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+        SortedList<User> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(userTable.comparatorProperty());
+        userTable.setItems(sortedData);
         usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
         roleColumn.setCellValueFactory(new PropertyValueFactory<>("role"));
         setupProfilesColumn();

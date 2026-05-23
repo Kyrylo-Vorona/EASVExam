@@ -23,11 +23,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AssignUsersController {
-    @FXML private Label lblTitle;
-    @FXML private TableView<UserWrapper> tableUsers;
-    @FXML private TableColumn<UserWrapper, Boolean> colSelected;
-    @FXML private TableColumn<UserWrapper, String> colUsername;
-    @FXML private TableColumn<UserWrapper, String> colRole;
+    @FXML
+    private Label lblTitle;
+    @FXML
+    private TableView<UserWrapper> tableUsers;
+    @FXML
+    private TableColumn<UserWrapper, Boolean> colSelected;
+    @FXML
+    private TableColumn<UserWrapper, String> colUsername;
+    @FXML
+    private TableColumn<UserWrapper, String> colRole;
 
     private Logic logic = Logic.getInstance();
     private Profile selectedProfile;
