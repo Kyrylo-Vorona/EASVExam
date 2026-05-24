@@ -57,33 +57,42 @@
     -fx-background-color: #F8FAFC;
     -fx-border-color: transparent transparent #E2E4E8 transparent;
 }
-
 .table-view .column-header {
     -fx-background-color: transparent;
     -fx-border-color: transparent #E2E4E8 transparent transparent;
     -fx-border-width: 1px;
 }
-
 .table-view .column-header .label {
     -fx-text-fill: #2D3D4F;
     -fx-font-weight: bold;
 }
 
-.table-view .table-row-cell:filled:selected {
+.table-row-cell {
+    -fx-background-color: white;
+}
+
+.table-view .table-row-cell:selected,
+.table-view .table-row-cell:focused:selected {
     -fx-background-color: #E2E8F0;
 }
 
-.table-view .table-row-cell:filled:selected .button,
-.table-view .table-row-cell:filled:selected .button .label,
-.table-view .table-row-cell:filled:selected .button .text {
+.table-view .table-row-cell:selected > .table-cell {
+    -fx-text-fill: #2D3D4F !important;
+}
+
+.table-view .table-cell .button {
+    -fx-background-color: #2D3D4F;
     -fx-text-fill: white !important;
+    -fx-text-base-color: white !important;
+    -fx-text-inner-color: white !important;
+}
+
+.table-view .table-cell .button .text {
     -fx-fill: white !important;
 }
 
-.table-view .table-row-cell:filled:selected > .label,
-.table-view .table-row-cell:filled:selected .text {
-    -fx-text-fill: #2D3D4F !important;
-    -fx-fill: #2D3D4F !important;
+.table-view .table-cell .button:hover {
+    -fx-border-color: #1E293B;
 }
 
 .status-success {

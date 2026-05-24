@@ -34,7 +34,7 @@ public class AddUserController implements Initializable {
 
     public void setUserData(User user) {
         this.userToEdit = user;
-        lblTitle.setText("User Details — ID: " + user.getId());
+        lblTitle.setText("User Details - ID: " + user.getId());
         usernameField.setText(user.getUsername());
         if (user.getRole() != null) {
             comboRole.getSelectionModel().select(user.getRole().toUpperCase());

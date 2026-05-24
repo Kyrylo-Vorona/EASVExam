@@ -20,7 +20,7 @@
             <children>
             <HBox prefHeight="21.0" prefWidth="360.0">
                <children>
-                      <Label fx:id="lblTitle" prefHeight="31.0" prefWidth="258.0" style="-fx-font-size: 16; -fx-font-weight: bold;" text="Assign Users to Profile" />
+                      <Label fx:id="lblTitle" prefHeight="29.0" prefWidth="358.0" style="-fx-font-size: 16; -fx-font-weight: bold;" text="Assign Users to Profile" />
                   <Region prefHeight="0.0" prefWidth="149.0" HBox.hgrow="ALWAYS" />
                   <TextField fx:id="searchUserField" prefHeight="31.0" prefWidth="183.0" promptText="Search users by username..." />
                </children>
