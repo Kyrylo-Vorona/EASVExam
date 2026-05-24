@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.AdminProfileManagementController">
+<VBox prefHeight="700.0" prefWidth="1100.0" stylesheets="@css/style.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.AdminProfileManagementController">
     <children>
         <HBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="1001.0" spacing="15.0" style="-fx-padding: 10; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;">
             <children>

@@ -9,6 +9,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -29,6 +31,8 @@ public class AssignUsersController {
     @FXML private TableColumn<UserWrapper, Boolean> colSelected;
     @FXML private TableColumn<UserWrapper, String> colUsername;
     @FXML private TableColumn<UserWrapper, String> colRole;
+    @FXML
+    private TextField searchUserField;
 
     private Logic logic = Logic.getInstance();
     private Profile selectedProfile;
@@ -52,8 +56,27 @@ public class AssignUsersController {
                     userWrappers.add(new UserWrapper(u, isAlreadyAssigned));
                 }
             }
+            FilteredList<UserWrapper> filteredData = new FilteredList<>(userWrappers, p -> true);
+            searchUserField.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredData.setPredicate(wrapper -> {
+                    if (newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+                    String lowerCaseFilter = newValue.toLowerCase().trim();
+                    User user = wrapper.getUser();
+                    if (user.getUsername() != null && user.getUsername().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+                    else if (user.getRole() != null && user.getRole().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+                    return false;
+                });
+            });
 
-            tableUsers.setItems(userWrappers);
+            SortedList<UserWrapper> sortedData = new SortedList<>(filteredData);
+            sortedData.comparatorProperty().bind(tableUsers.comparatorProperty());
+            tableUsers.setItems(sortedData);
             setupTable();
         } catch (MyException e) {
             OpenView.showErrorAlert(e.getMessage());
@@ -72,7 +95,6 @@ public class AssignUsersController {
     private void onSave(ActionEvent event) {
         try {
             List<Integer> idsToAssign = new ArrayList<>();
-            // Собираем ID только тех пользователей, у которых стоит галочка
             for (UserWrapper wrapper : userWrappers) {
                 if (wrapper.isSelected()) {
                     idsToAssign.add(wrapper.getUser().getId());

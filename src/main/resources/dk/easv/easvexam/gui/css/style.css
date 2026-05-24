@@ -51,35 +51,39 @@
 
 .table-view {
     -fx-background-color: white;
-    -fx-background-radius: 6px;
-    -fx-border-radius: 6px;
-    -fx-border-color: #E2E4E8;
-    -fx-padding: 0;
 }
 
 .table-view .column-header-background {
     -fx-background-color: #F8FAFC;
     -fx-border-color: transparent transparent #E2E4E8 transparent;
 }
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent #E2E4E8 transparent transparent;
+    -fx-border-width: 1px;
+}
+
 .table-view .column-header .label {
     -fx-text-fill: #2D3D4F;
     -fx-font-weight: bold;
 }
 
-.table-row-cell {
-    -fx-background-color: white;
-    -fx-border-color: transparent transparent #F1F5F9 transparent;
-}
-
-.table-row-cell:odd {
-    -fx-background-color: #FAFAFA;
-}
-
-.table-row-cell:filled:selected {
+.table-view .table-row-cell:filled:selected {
     -fx-background-color: #E2E8F0;
 }
-.table-row-cell:filled:selected .label {
-    -fx-text-fill: #2D3D4F;
+
+.table-view .table-row-cell:filled:selected .button,
+.table-view .table-row-cell:filled:selected .button .label,
+.table-view .table-row-cell:filled:selected .button .text {
+    -fx-text-fill: white !important;
+    -fx-fill: white !important;
+}
+
+.table-view .table-row-cell:filled:selected > .label,
+.table-view .table-row-cell:filled:selected .text {
+    -fx-text-fill: #2D3D4F !important;
+    -fx-fill: #2D3D4F !important;
 }
 
 .status-success {
@@ -89,4 +93,140 @@
 .status-error {
     -fx-text-fill: #FF3D32;
     -fx-font-weight: bold;
+}
+
+.button:focused {
+    -fx-border-color: #4CD07D;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+    -fx-border-insets: -3px;
+}
+
+.text-field:focused {
+    -fx-background-color: white;
+    -fx-border-color: #2D3D4F;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+}
+
+.button-secondary:focused {
+    -fx-border-color: #4CD07D;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+    -fx-border-insets: -3px;
+}
+
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 2;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #2D3D4F;
+}
+
+.combo-box:hover {
+    -fx-background-color: white;
+    -fx-border-color: #2D3D4F;
+}
+.combo-box:hover .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box:hover .arrow {
+    -fx-background-color: #2D3D4F;
+}
+
+.combo-box:showing {
+    -fx-background-color: white;
+    -fx-border-color: #2D3D4F;
+}
+.combo-box:showing .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box:showing .arrow {
+    -fx-background-color: #2D3D4F;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #2D3D4F;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #E2E4E8;
+    -fx-effect: none;
+}
+.combo-box-popup .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #2D3D4F;
+    -fx-padding: 6 10 6 10;
+}
+
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: #2D3D4F;
+    -fx-text-fill: white;
+}
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #2D3D4F;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 3px;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #4CD07D;
+    -fx-border-color: #4CD07D;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+.tree-view, .list-view {
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-border-color: #E2E4E8;
+}
+
+.tree-cell, .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #2D3D4F;
+    -fx-padding: 6 10 6 10;
+}
+
+.tree-cell:filled:hover, .list-cell:filled:hover {
+    -fx-background-color: #F5F5F5;
+}
+
+.tree-cell:filled:selected, .list-cell:filled:selected {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #2D3D4F;
+    -fx-font-weight: bold;
+}
+
+.tree-cell .tree-toggle-button .arrow {
+    -fx-background-color: #2D3D4F;
+}
+
+.combo-box:focused, .tree-view:focused, .list-view:focused {
+    -fx-border-color: #2D3D4F;
+    -fx-border-width: 2px;
+}
+
+.check-box:focused .box {
+    -fx-border-color: #4CD07D;
+    -fx-border-width: 2px;
 }

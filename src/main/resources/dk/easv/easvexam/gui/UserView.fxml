@@ -2,7 +2,9 @@
 
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
@@ -16,9 +18,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
-<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.UserController">
+<BorderPane prefHeight="600.0" prefWidth="900.0" stylesheets="@css/style.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.easvexam.gui.UserController">
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: #f4f4f4;">
@@ -27,7 +27,7 @@
             <ComboBox fx:id="comboProfiles" prefHeight="32.0" prefWidth="150.0" promptText="Select a profile" />
 
             <HBox alignment="CENTER_LEFT" spacing="5">
-                <Button onAction="#onRotateButtonClick" prefHeight="34.0" prefWidth="60.0" text="Rotate" />
+                <Button onAction="#onRotateButtonClick" prefHeight="34.0" prefWidth="75.0" text="Rotate" />
                 <TextField fx:id="rotateField" alignment="CENTER" prefHeight="34.0" prefWidth="40.0" text="90" />
             </HBox>
 
@@ -46,7 +46,7 @@
             <TextField fx:id="txtCase" prefHeight="34.0" prefWidth="59.0" promptText="Case" />
             <ComboBox fx:id="comboStatus" prefHeight="34.0" prefWidth="150.0" promptText="" />
             <CheckBox fx:id="chkMultiPage" text="Multi-page TIFF" />
-            <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="75.0" onAction="#onExportButtonClick" text="Export" />
+            <Button mnemonicParsing="false" onAction="#onExportButtonClick" prefHeight="34.0" prefWidth="75.0" text="Export" />
 
             <Region HBox.hgrow="ALWAYS" />
 
