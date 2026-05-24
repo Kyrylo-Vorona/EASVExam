@@ -6,6 +6,7 @@ import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.bll.Logic;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,16 +24,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AssignUsersController {
-    @FXML
-    private Label lblTitle;
-    @FXML
-    private TableView<UserWrapper> tableUsers;
-    @FXML
-    private TableColumn<UserWrapper, Boolean> colSelected;
-    @FXML
-    private TableColumn<UserWrapper, String> colUsername;
-    @FXML
-    private TableColumn<UserWrapper, String> colRole;
+    @FXML private Label lblTitle;
+    @FXML private TableView<UserWrapper> tableUsers;
+    @FXML private TableColumn<UserWrapper, Boolean> colSelected;
+    @FXML private TableColumn<UserWrapper, String> colUsername;
+    @FXML private TableColumn<UserWrapper, String> colRole;
 
     private Logic logic = Logic.getInstance();
     private Profile selectedProfile;
@@ -40,7 +36,7 @@ public class AssignUsersController {
 
     public void setTable(Profile profile) {
         this.selectedProfile = profile;
-        lblTitle.setText("Assigning to: " + profile.getName());
+        lblTitle.setText("Assigning to: " + profile.getName() + " (ID: " + profile.getId() + ")");
         loadUsers();
     }
 
@@ -49,13 +45,12 @@ public class AssignUsersController {
             List<User> allUsers = logic.getAllUsers();
             List<Integer> assignedIds = logic.getUserIdsForProfile(selectedProfile.getId());
             userWrappers.clear();
-            List<User> onlyRegularUsers = allUsers.stream()
-                    .filter(u -> u.getRole().equalsIgnoreCase("USER"))
-                    .collect(Collectors.toList());
 
-            for (User u : onlyRegularUsers) {
-                boolean isAlreadyAssigned = assignedIds.contains(u.getId());
-                userWrappers.add(new UserWrapper(u, isAlreadyAssigned));
+            for (User u : allUsers) {
+                if (u.getRole().equalsIgnoreCase("USER")) {
+                    boolean isAlreadyAssigned = assignedIds.contains(u.getId());
+                    userWrappers.add(new UserWrapper(u, isAlreadyAssigned));
+                }
             }
 
             tableUsers.setItems(userWrappers);
@@ -66,23 +61,23 @@ public class AssignUsersController {
     }
 
     private void setupTable() {
-        colUsername.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUser().getUsername()));
-        colRole.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getUser().getRole()));
-        colSelected.setCellValueFactory(cellData -> cellData.getValue().selectedProperty());
-
-        colSelected.setCellFactory(CheckBoxTableCell.forTableColumn(colSelected));
         tableUsers.setEditable(true);
+        colUsername.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser().getUsername()));
+        colRole.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser().getRole()));
+        colSelected.setCellValueFactory(cellData -> cellData.getValue().selectedProperty());
+        colSelected.setCellFactory(CheckBoxTableCell.forTableColumn(colSelected));
     }
 
     @FXML
     private void onSave(ActionEvent event) {
         try {
-            List<Integer> idsToAssign = userWrappers.stream()
-                    .filter(UserWrapper::isSelected)
-                    .map(w -> w.getUser().getId())
-                    .collect(Collectors.toList());
+            List<Integer> idsToAssign = new ArrayList<>();
+            // Собираем ID только тех пользователей, у которых стоит галочка
+            for (UserWrapper wrapper : userWrappers) {
+                if (wrapper.isSelected()) {
+                    idsToAssign.add(wrapper.getUser().getId());
+                }
+            }
 
             logic.assignUsersToProfile(selectedProfile.getId(), idsToAssign);
             cancel(event);
@@ -111,7 +106,6 @@ public class AssignUsersController {
 
         public User getUser() { return user; }
         public boolean isSelected() { return selected.get(); }
-        public void setSelected(boolean val) { this.selected.set(val); }
         public BooleanProperty selectedProperty() { return selected; }
     }
 }

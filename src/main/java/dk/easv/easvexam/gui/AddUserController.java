@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
@@ -19,6 +20,7 @@ public class AddUserController implements Initializable {
     @FXML private TextField passwordField;
     @FXML private ComboBox<String> comboRole;
     @FXML private Button saveButton;
+    @FXML private Label lblTitle;
 
     private Logic logic = Logic.getInstance();
     private User userToEdit;
@@ -32,6 +34,7 @@ public class AddUserController implements Initializable {
 
     public void setUserData(User user) {
         this.userToEdit = user;
+        lblTitle.setText("User Details — ID: " + user.getId());
         usernameField.setText(user.getUsername());
         if (user.getRole() != null) {
             comboRole.getSelectionModel().select(user.getRole().toUpperCase());
