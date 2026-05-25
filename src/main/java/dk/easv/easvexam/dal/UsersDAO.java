@@ -3,10 +3,7 @@ package dk.easv.easvexam.dal;
 import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.be.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +30,37 @@ public class UsersDAO {
         return null;
     }
 
-    public void addUser(String username, String password, String role) throws MyException {
-        try (Connection con = cm.getConnection()) {
-            String add = "INSERT INTO Users (username, password_hash, role) VALUES (?, ?, ?)";
-            PreparedStatement pstmt = con.prepareStatement(add);
+    public int addUser(String username, String password, String role) throws MyException {
+        String add = "INSERT INTO Users (username, password_hash, role) VALUES (?, ?, ?)";
+
+        try (Connection con = cm.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(add, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
             pstmt.setString(3, role);
             pstmt.executeUpdate();
+
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new MyException("Creating user failed, no ID obtained.", null);
+                }
+            }
         } catch (SQLException e) {
             throw new MyException("Database error: Could not add user", e);
+        }
+    }
+
+    public void deleteUserProfiles(int userId) throws MyException {
+        String sql = "DELETE FROM User_Profiles WHERE user_id = ?";
+
+        try (Connection con = cm.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new MyException("Database error: Could not delete old user profiles", e);
         }
     }
 
@@ -70,7 +88,6 @@ public class UsersDAO {
     }
 
     public void deleteUser(User user) throws MyException {
-        //String deleteLinks = "DELETE FROM EventCoordinators WHERE user_id = ?";
         String deleteUser = "DELETE FROM Users WHERE id = ?";
         try (Connection con = cm.getConnection()) {
             con.setAutoCommit(false);
@@ -85,6 +102,40 @@ public class UsersDAO {
         } catch (SQLException e) {
             throw new MyException("Database error: Could not delete user and their assignments", e);
         }
+    }
+
+    public void saveUserProfiles(int userId, List<Integer> profileIds) throws MyException {
+        String sql = "INSERT INTO User_Profiles (user_id, profile_id) VALUES (?, ?)";
+
+        try (Connection con = cm.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            for (int profileId : profileIds) {
+                stmt.setInt(1, userId);
+                stmt.setInt(2, profileId);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            throw new MyException("Database error: Could not assign profiles to the user", e);
+        }
+    }
+
+    public List<Integer> getProfileIdsByUserId(int userId) throws MyException {
+        String sql = "SELECT profile_id FROM User_Profiles WHERE user_id = ?";
+        List<Integer> profileIds = new ArrayList<>();
+
+        try (Connection con = cm.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    profileIds.add(rs.getInt("profile_id"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new MyException("Database error: Could not fetch assign profiles to user", e);
+        }
+        return profileIds;
     }
 
     public List<User> getAllUsers() throws MyException {

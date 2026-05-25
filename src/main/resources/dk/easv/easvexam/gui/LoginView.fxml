@@ -16,7 +16,7 @@
 
     <ImageView fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
         <image>
-            <Image url="@images/LogoBlue2H.png" />
+            <Image url="@images/LogoGreen2H.png" />
         </image>
     </ImageView>
 

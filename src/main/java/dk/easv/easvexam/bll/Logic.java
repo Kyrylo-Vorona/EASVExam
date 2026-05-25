@@ -66,6 +66,25 @@ public class Logic {
         DALManager.getInstance().getDocumentsDAO().logActivity(userId, action);
     }
 
+    public void addUserWithProfiles(String username, String password, String role, List<Integer> profileIds) throws MyException {
+        int newUserId = DALManager.getInstance().getUsersDAO().addUser(username, password, role);
+        if (!profileIds.isEmpty()) {
+            DALManager.getInstance().getUsersDAO().saveUserProfiles(newUserId, profileIds);
+        }
+    }
+
+    public void editUserWithProfiles(User user, String password, List<Integer> profileIds) throws MyException {
+        DALManager.getInstance().getUsersDAO().editUser(user, password);
+        DALManager.getInstance().getUsersDAO().deleteUserProfiles(user.getId());
+        if (!profileIds.isEmpty()) {
+            DALManager.getInstance().getUsersDAO().saveUserProfiles(user.getId(), profileIds);
+        }
+    }
+
+    public List<Integer> getProfileIdsForUser(int userId) throws MyException {
+        return DALManager.getInstance().getUsersDAO().getProfileIdsByUserId(userId);
+    }
+
     public List<User> getAllUsers() throws MyException {
         return DALManager.getInstance().getUsersDAO().getAllUsers();
     }
