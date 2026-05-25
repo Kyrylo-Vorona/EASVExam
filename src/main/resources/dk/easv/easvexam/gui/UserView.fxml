@@ -64,6 +64,7 @@
                             <Button mnemonicParsing="false" onAction="#moveSelectedUp" prefHeight="30.0" prefWidth="50.0" text="▲" />
                             <Button mnemonicParsing="false" onAction="#moveSelectedDown" prefHeight="30.0" prefWidth="50.0" text="▼" />
                             <Button mnemonicParsing="false" onAction="#deleteSelected" prefHeight="30.0" prefWidth="70.0" text="Delete" />
+                            <Label fx:id="lblTotalScans" />
                             <Region HBox.hgrow="ALWAYS" />
                             <Label fx:id="lblStatus" />
                         </children>

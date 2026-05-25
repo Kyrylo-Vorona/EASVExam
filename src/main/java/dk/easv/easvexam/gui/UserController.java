@@ -69,6 +69,8 @@ public class UserController implements Initializable {
     private TreeView<String> docTreeView;
     @FXML
     private Label lblStatus;
+    @FXML
+    private Label lblTotalScans;
 
     private TreeItem<String> rootItem = new TreeItem<>("Scanned Items");
     private double zoomFactor = 1.0;
@@ -156,6 +158,7 @@ public class UserController implements Initializable {
                         imageContainer.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
                         scrollPane.setVvalue(0.0);
                         scrollPane.setHvalue(0.0);
+                        updateTotalScansCount();
                     } else {
                         OpenView.showErrorAlert("Error: file inside of ZIP is not an image or crashed");
                     }
@@ -276,6 +279,7 @@ public class UserController implements Initializable {
         comboStatus.setItems(FXCollections.observableArrayList("In Progress", "Waiting for QA", "Completed"));
         comboStatus.setValue("In Progress");
         Platform.runLater(this::initKeyboardShortcuts);
+        updateTotalScansCount();
     }
 
     private void applyBrightness(double value) {
@@ -319,6 +323,7 @@ public class UserController implements Initializable {
             treeImageMap.remove(selected);
             logic.logActivity(currentUser.getId(), "Deleted item: " + selected.getValue());
             imageView.setImage(null);
+            updateTotalScansCount();
         }
     }
 
@@ -512,5 +517,12 @@ public class UserController implements Initializable {
         fade.setDelay(Duration.seconds(4));
         fade.setOnFinished(e -> lblStatus.setText(""));
         fade.play();
+    }
+
+    private void updateTotalScansCount() {
+        if (lblTotalScans != null) {
+            int totalScans = treeImageMap.size();
+            lblTotalScans.setText("Total Scans: " + totalScans);
+        }
     }
 }
