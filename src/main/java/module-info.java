@@ -11,7 +11,7 @@ module dk.easv.easvexam {
     requires com.google.zxing;
     requires com.google.zxing.javase;
     requires org.controlsfx.controls;
-    requires dk.easv.easvexam;
+    //requires dk.easv.easvexam;
 
 
     opens dk.easv.easvexam to javafx.fxml;

@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class ActivityLog {
     private int id;
-    private String username; // Вместо ID храним имя
+    private String username;
     private String action;
     private Timestamp timestamp;
 
@@ -18,5 +18,14 @@ public class ActivityLog {
     public int getId() { return id; }
     public String getUsername() { return username; }
     public String getAction() { return action; }
-    public Timestamp getTimestamp() { return timestamp; }
+    public String getTimestamp() {
+        if (timestamp != null) {
+            String timeStr = timestamp.toString();
+            if (timeStr.endsWith(".0")) {
+                return timeStr.substring(0, timeStr.length() - 2);
+            }
+            return timeStr;
+        }
+        return null;
+    }
 }

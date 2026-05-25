@@ -201,10 +201,6 @@ public class AdminProfileManagementController implements Initializable {
 
     @FXML
     public void onSaveProfile(ActionEvent event) {
-        if (selectedProfile == null) {
-            OpenView.showErrorAlert("Please select a profile to save.");
-            return;
-        }
         try {
             selectedProfile.setName(txtName.getText());
             selectedProfile.setRotateDegrees(Integer.parseInt(txtRotation.getText()));

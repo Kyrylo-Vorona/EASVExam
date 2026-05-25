@@ -28,17 +28,6 @@ public class Logic {
         return DALManager.getInstance().getUsersDAO().login(username, password);
     }
 
-    public void addUser(String username, String password, String role) throws MyException {
-        if (username.isEmpty() || password.isEmpty() || role.isEmpty()) {
-            return;
-        }
-        DALManager.getInstance().getUsersDAO().addUser(username, password, role);
-    }
-
-    public void editUser(User user, String newPassword) throws MyException {
-        DALManager.getInstance().getUsersDAO().editUser(user, newPassword);
-    }
-
     public void deleteUser(User user) throws MyException {
         DALManager.getInstance().getUsersDAO().deleteUser(user);
     }
@@ -48,6 +37,10 @@ public class Logic {
     }
 
     public void editProfile(Profile profile) throws MyException {
+        if (profile == null) {
+            OpenView.showErrorAlert("Please select a profile to save.");
+            return;
+        }
         DALManager.getInstance().getProfilesDAO().editProfile(profile);
     }
 

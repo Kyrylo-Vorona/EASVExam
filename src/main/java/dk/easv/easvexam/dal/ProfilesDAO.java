@@ -2,7 +2,6 @@ package dk.easv.easvexam.dal;
 
 import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.be.Profile;
-import dk.easv.easvexam.gui.OpenView;
 
 import java.sql.*;
 import java.util.ArrayList;

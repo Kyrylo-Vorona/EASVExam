@@ -12,7 +12,7 @@ public class DocumentsDAO {
     public DocumentsDAO() { cm  = new ConnectionManager(); }
 
     public void saveDocumentToDb(String boxId, String client, String caseName, int profileId, int userId, String status, List<String> filePaths) throws MyException {
-        String insertDocSql = "INSERT INTO Documents (box_id, client, [case], profile_id, created_by, status, created_at) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+        String insertDocSql = "INSERT INTO Documents (box_id, client, [case], profile_id, created_by, status, created_at) VALUES (?, ?, ?, ?, ?, ?, CONVERT(varchar(19), CURRENT_TIMESTAMP, 120))";
         String insertFileSql = "INSERT INTO Files (document_id, file_path) VALUES (?, ?)";
 
         try (Connection con = cm.getConnection()) {
@@ -52,7 +52,7 @@ public class DocumentsDAO {
     }
 
     public void logActivity(int userId, String action) throws MyException {
-        String sql = "INSERT INTO ActivityLogs (user_id, action, timestamp) VALUES (?, ?, CURRENT_TIMESTAMP)";
+        String sql = "INSERT INTO ActivityLogs (user_id, action, timestamp) VALUES (?, ?, CONVERT(varchar(19), CURRENT_TIMESTAMP, 120))";
         try (Connection con = cm.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setInt(1, userId);
