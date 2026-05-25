@@ -5,6 +5,7 @@ import dk.easv.easvexam.be.MyException;
 import dk.easv.easvexam.be.Profile;
 import dk.easv.easvexam.be.User;
 import dk.easv.easvexam.dal.DALManager;
+import dk.easv.easvexam.gui.OpenView;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,27 @@ public class Logic {
     }
 
     public void saveDocumentToDb(String boxId, String client, String caseName, int profileId, int userId, String status, List<String> filePaths) throws MyException {
-        DALManager.getInstance().getDocumentsDAO().saveDocumentToDb(boxId, client, caseName,profileId, userId, status, filePaths);
+        if (boxId == null || boxId.trim().isEmpty()) {
+            OpenView.showErrorAlert("Validation Error: Box ID cannot be empty!");
+            return;
+        }
+        if (client == null || client.trim().isEmpty()) {
+            OpenView.showErrorAlert("Validation Error: Client name cannot be empty!");
+            return;
+        }
+        if (caseName == null || caseName.trim().isEmpty()) {
+            OpenView.showErrorAlert("Validation Error: Case name cannot be empty!");
+            return;
+        }
+        if (filePaths == null || filePaths.isEmpty()) {
+            OpenView.showErrorAlert("Validation Error: No scanned pages found to export!");
+            return;
+        }
+        if (userId <= 0) {
+            OpenView.showErrorAlert("Validation Error: Invalid User session!");
+            return;
+        }
+        DALManager.getInstance().getDocumentsDAO().saveDocumentToDb(boxId, client, caseName, profileId, userId, status, filePaths);
     }
 
     public void logActivity(int userId, String action) throws MyException {

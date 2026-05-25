@@ -384,10 +384,6 @@ public class UserController implements Initializable {
         String caseName = txtCase.getText().trim();
         Profile selectedProfile = comboProfiles.getValue();
         String currentStatus = comboStatus.getValue();
-        if (boxId.isEmpty() || client.isEmpty() || caseName.isEmpty() || selectedProfile == null || currentUser == null) {
-            OpenView.showErrorAlert("Error: Missing required fields for export (Box ID, Client, Case or Profile)!");
-            return;
-        }
         try {
             File exportFolder = new File("Export");
             File clientFolder = new File(exportFolder, client);
