@@ -384,6 +384,10 @@ public class UserController implements Initializable {
         String caseName = txtCase.getText().trim();
         Profile selectedProfile = comboProfiles.getValue();
         String currentStatus = comboStatus.getValue();
+        if (boxId.isEmpty() || client.isEmpty() || caseName.isEmpty() || selectedProfile == null) {
+            OpenView.showErrorAlert("Validation Error: Please fill in Box ID, Client, Case and select a Profile before exporting!");
+            return;
+        }
         try {
             File exportFolder = new File("Export");
             File clientFolder = new File(exportFolder, client);

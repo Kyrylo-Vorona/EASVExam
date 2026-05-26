@@ -54,24 +54,19 @@ public class Logic {
 
     public void saveDocumentToDb(String boxId, String client, String caseName, int profileId, int userId, String status, List<String> filePaths) throws MyException {
         if (boxId == null || boxId.trim().isEmpty()) {
-            OpenView.showErrorAlert("Validation Error: Box ID cannot be empty!");
-            return;
+            throw new MyException("Validation Error: Box ID cannot be empty!", null);
         }
         if (client == null || client.trim().isEmpty()) {
-            OpenView.showErrorAlert("Validation Error: Client name cannot be empty!");
-            return;
+            throw new MyException("Validation Error: Client name cannot be empty!", null);
         }
         if (caseName == null || caseName.trim().isEmpty()) {
-            OpenView.showErrorAlert("Validation Error: Case name cannot be empty!");
-            return;
+            throw new MyException("Validation Error: Case name cannot be empty!", null);
         }
         if (filePaths == null || filePaths.isEmpty()) {
-            OpenView.showErrorAlert("Validation Error: No scanned pages found to export!");
-            return;
+            throw new MyException("Validation Error: No scanned pages found to export!", null);
         }
         if (userId <= 0) {
-            OpenView.showErrorAlert("Validation Error: Invalid User session!");
-            return;
+            throw new MyException("Validation Error: Invalid User session!", null);
         }
         DALManager.getInstance().getDocumentsDAO().saveDocumentToDb(boxId, client, caseName, profileId, userId, status, filePaths);
     }
