@@ -9,6 +9,7 @@ import dk.easv.easvexam.bll.BarcodeService;
 import dk.easv.easvexam.bll.Logic;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -289,13 +290,29 @@ public class UserController implements Initializable {
     @FXML
     private void moveSelectedUp() {
         TreeItem<String> selected = docTreeView.getSelectionModel().getSelectedItem();
-        if (selected != null && selected.getParent() != null) {
-            TreeItem<String> parent = selected.getParent();
-            int index = parent.getChildren().indexOf(selected);
-            if (index > 0) {
-                parent.getChildren().remove(selected);
-                parent.getChildren().add(index - 1, selected);
+        if (selected == null || selected == rootItem || selected.getParent() == null) {
+            return;
+        }
+        TreeItem<String> parent = selected.getParent();
+        ObservableList<TreeItem<String>> siblings = parent.getChildren();
+        int index = siblings.indexOf(selected);
+        if (index > 0) {
+            siblings.remove(selected);
+            siblings.add(index - 1, selected);
+            docTreeView.getSelectionModel().select(selected);
+            if (parent != rootItem) {
+                refreshPageNumbers(parent);
+            }
+        } else if (parent != rootItem) {
+            ObservableList<TreeItem<String>> docs = rootItem.getChildren();
+            int parentIndex = docs.indexOf(parent);
+            if (parentIndex > 0) {
+                TreeItem<String> prevDoc = docs.get(parentIndex - 1);
+                siblings.remove(selected);
+                prevDoc.getChildren().add(selected);
                 docTreeView.getSelectionModel().select(selected);
+                refreshPageNumbers(parent);
+                refreshPageNumbers(prevDoc);
             }
         }
     }
@@ -303,14 +320,38 @@ public class UserController implements Initializable {
     @FXML
     private void moveSelectedDown() {
         TreeItem<String> selected = docTreeView.getSelectionModel().getSelectedItem();
-        if (selected != null && selected.getParent() != null) {
-            TreeItem<String> parent = selected.getParent();
-            int index = parent.getChildren().indexOf(selected);
-            if (index >= 0 && index < parent.getChildren().size() - 1) {
-                parent.getChildren().remove(selected);
-                parent.getChildren().add(index + 1, selected);
-                docTreeView.getSelectionModel().select(selected);
+        if (selected == null || selected == rootItem || selected.getParent() == null) {
+            return;
+        }
+        TreeItem<String> parent = selected.getParent();
+        ObservableList<TreeItem<String>> siblings = parent.getChildren();
+        int index = siblings.indexOf(selected);
+        if (index >= 0 && index < siblings.size() - 1) {
+            siblings.remove(selected);
+            siblings.add(index + 1, selected);
+            docTreeView.getSelectionModel().select(selected);
+            if (parent != rootItem) {
+                refreshPageNumbers(parent);
             }
+        } else if (parent != rootItem) {
+            ObservableList<TreeItem<String>> docs = rootItem.getChildren();
+            int parentIndex = docs.indexOf(parent);
+            if (parentIndex < docs.size() - 1) {
+                TreeItem<String> nextDoc = docs.get(parentIndex + 1);
+                siblings.remove(selected);
+                nextDoc.getChildren().add(0, selected);
+                docTreeView.getSelectionModel().select(selected);
+                refreshPageNumbers(parent);
+                refreshPageNumbers(nextDoc);
+            }
+        }
+    }
+
+    private void refreshPageNumbers(TreeItem<String> documentNode) {
+        int pageNumber = 1;
+        for (TreeItem<String> pageNode : documentNode.getChildren()) {
+            pageNode.setValue("Page " + pageNumber);
+            pageNumber++;
         }
     }
 
@@ -323,6 +364,9 @@ public class UserController implements Initializable {
             treeImageMap.remove(selected);
             logic.logActivity(currentUser.getId(), "Deleted item: " + selected.getValue());
             imageView.setImage(null);
+            if (parent != rootItem) {
+                refreshPageNumbers(parent);
+            }
             updateTotalScansCount();
         }
     }
