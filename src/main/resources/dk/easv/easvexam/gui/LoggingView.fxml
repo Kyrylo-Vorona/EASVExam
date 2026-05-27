@@ -2,11 +2,14 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -24,6 +27,17 @@
                                 <Font name="System Bold" size="22.0" />
                             </font>
                         </Label>
+                  <Region prefHeight="33.0" prefWidth="147.0" HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="comboTimeFilter" prefHeight="33.0" prefWidth="151.0" promptText="Time Filter">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </ComboBox>
+                  <TextField fx:id="txtSearch" prefHeight="33.0" prefWidth="178.0" promptText="Search by username or action...">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </TextField>
                     </children>
                 </HBox>
 
