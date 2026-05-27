@@ -432,20 +432,26 @@ public class UserController implements Initializable {
             OpenView.showErrorAlert("Validation Error: Please fill in Box ID, Client, Case and select a Profile before exporting!");
             return;
         }
+        javafx.stage.DirectoryChooser directoryChooser = new javafx.stage.DirectoryChooser();
+        directoryChooser.setTitle("Select Export Directory");
+        java.io.File selectedDirectory = directoryChooser.showDialog(docTreeView.getScene().getWindow());
+        if (selectedDirectory == null) {
+            return;
+        }
         try {
-            File exportFolder = new File("Export");
-            File clientFolder = new File(exportFolder, client);
-            File caseFolder = new File(clientFolder, caseName);
-            File boxFolder = new File(caseFolder, "Export_" + boxId);
+            String cleanProfileName = selectedProfile.getName().replace(" ", "_");
+            java.io.File clientFolder = new java.io.File(selectedDirectory, client);
+            java.io.File caseFolder = new java.io.File(clientFolder, caseName);
+            java.io.File boxFolder = new java.io.File(caseFolder, cleanProfileName + "_" + boxId);
             if (!boxFolder.exists()) {
                 boxFolder.mkdirs();
             }
             double currentRotation = imageView.getRotate();
             double currentBrightness = brightnessSlider.getValue();
+            String basePathToStrip = selectedDirectory.getCanonicalPath();
             for (TreeItem<String> docNode : rootItem.getChildren()) {
                 String docName = docNode.getValue();
                 String cleanDocName = docName.replace("Document [", "").replace("]", "").replace(" ", "_");
-                String cleanProfileName = selectedProfile.getName().replace(" ", "_");
                 String baseDocumentName = cleanProfileName + "_" + boxId + "_" + cleanDocName;
                 List<String> savedFilePaths = new ArrayList<>();
                 List<BufferedImage> docImages = new ArrayList<>();
@@ -460,19 +466,23 @@ public class UserController implements Initializable {
                     continue;
                 }
                 if (chkMultiPage.isSelected()) {
-                    File tiffFile = new File(boxFolder, baseDocumentName + ".tiff");
+                    java.io.File tiffFile = new java.io.File(boxFolder, baseDocumentName + ".tiff");
                     saveMultiPageTiff(docImages, tiffFile);
-                    savedFilePaths.add(tiffFile.getPath());
-                } else {
-                    File docFolder = new File(boxFolder, baseDocumentName);
-                    if (!docFolder.exists()) {
-                        docFolder.mkdir();
+                    String relativePath = tiffFile.getCanonicalPath().substring(basePathToStrip.length());
+                    if (relativePath.startsWith(java.io.File.separator)) {
+                        relativePath = relativePath.substring(1);
                     }
+                    savedFilePaths.add(relativePath);
+                } else {
                     int pageIndex = 1;
                     for (BufferedImage img : docImages) {
-                        File pageFile = new File(docFolder, "Page_" + pageIndex + ".tiff");
+                        java.io.File pageFile = new java.io.File(boxFolder, baseDocumentName + "_Page_" + pageIndex + ".tiff");
                         ImageIO.write(img, "TIFF", pageFile);
-                        savedFilePaths.add(pageFile.getPath());
+                        String relativePath = pageFile.getCanonicalPath().substring(basePathToStrip.length());
+                        if (relativePath.startsWith(java.io.File.separator)) {
+                            relativePath = relativePath.substring(1);
+                        }
+                        savedFilePaths.add(relativePath);
                         pageIndex++;
                     }
                 }
@@ -484,9 +494,8 @@ public class UserController implements Initializable {
                     OpenView.showErrorAlert("Database save failed: " + dbEx.getMessage());
                 }
             }
-
         } catch (Exception e) {
-            OpenView.showErrorAlert("Wrong username or password" + e);
+            OpenView.showErrorAlert("Export failed: " + e.getMessage());
         }
     }
 
