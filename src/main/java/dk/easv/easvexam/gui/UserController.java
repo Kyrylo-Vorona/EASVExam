@@ -525,6 +525,11 @@ public class UserController implements Initializable {
                 event.consume();
             }
 
+            else if (event.getCode() == KeyCode.F1) {
+                showHelpDialog();
+                event.consume();
+            }
+
             else if (isCtrlDown && (event.getCode() == KeyCode.EQUALS || event.getCode() == KeyCode.PLUS)) {
                 onZoomIn();
                 scrollPane.requestFocus();
@@ -586,5 +591,25 @@ public class UserController implements Initializable {
             int totalScans = treeImageMap.size();
             lblTotalScans.setText("Total Scans: " + totalScans);
         }
+    }
+
+    @FXML
+    private void showHelpDialog() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Keyboard Shortcuts Guide");
+        alert.setHeaderText("Scanner Hotkeys Reference");
+        String shortcutsText =
+                "Ctrl + S \t\t->  Scan Document\n" +
+                        "Ctrl + E \t\t->  Export Box\n" +
+                        "Ctrl + N \t\t->  Create New Document\n" +
+                        "Ctrl + Plus \t->  Zoom In\n" +
+                        "Ctrl + Minus\t->  Zoom Out\n" +
+                        "Ctrl + M \t\t->  Increase Brightness\n" +
+                        "Ctrl + L \t\t->  Decrease Brightness\n\n" +
+                        "Navigation:\n" +
+                        "Arrow Keys \t->  Scroll Scanned Image";
+
+        alert.setContentText(shortcutsText);
+        alert.showAndWait();
     }
 }
