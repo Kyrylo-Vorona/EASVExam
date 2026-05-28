@@ -98,6 +98,12 @@ public class UserController implements Initializable {
 
     @FXML
     protected void onScanButtonClick() {
+        Profile selected = comboProfiles.getValue();
+        if (selected == null) {
+            OpenView.showErrorAlert("Validation Error: You must select a profile before scanning!");
+            return;
+        }
+
         try {
             InputStream stream = ApiService.getInstance().fetchRandomTiff();
             try (ZipInputStream zipIn = new ZipInputStream(stream)) {
@@ -106,6 +112,7 @@ public class UserController implements Initializable {
                     byte[] bytes = zipIn.readAllBytes();
                     BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(bytes));
                     if (bufferedImage != null) {
+                        comboProfiles.setDisable(true);
                         String barcodeValue = barcodeService.detectBarcode(bufferedImage);
 
                         if (barcodeValue != null) {
@@ -143,13 +150,12 @@ public class UserController implements Initializable {
                         imageView.setScaleX(1.0);
                         imageView.setScaleY(1.0);
                         zoomFactor = 1.0;
-                        Profile selected = comboProfiles.getValue();
-                        if (selected != null) {
-                            imageView.setRotate(selected.getRotateDegrees());
-                            double brightnessVal = selected.getBrightness() / 100.0;
-                            applyBrightness(brightnessVal);
-                            brightnessSlider.setValue(brightnessVal);
-                        }
+
+                        imageView.setRotate(selected.getRotateDegrees());
+                        double brightnessVal = selected.getBrightness() / 100.0;
+                        applyBrightness(brightnessVal);
+                        brightnessSlider.setValue(brightnessVal);
+
                         double viewWidth = scrollPane.getViewportBounds().getWidth();
                         double viewHeight = scrollPane.getViewportBounds().getHeight();
                         if (viewWidth <= 0) viewWidth = scrollPane.getWidth();
@@ -404,7 +410,7 @@ public class UserController implements Initializable {
         Profile selectedProfile = comboProfiles.getValue();
         String currentStatus = comboStatus.getValue();
         if (boxId.isEmpty() || client.isEmpty() || caseName.isEmpty() || selectedProfile == null) {
-            OpenView.showErrorAlert("Validation Error: Please fill in Box ID, Client, Case and select a Profile before exporting!");
+            OpenView.showErrorAlert("Validation Error: Please fill in Box ID, Client and Case!");
             return;
         }
         javafx.stage.DirectoryChooser directoryChooser = new javafx.stage.DirectoryChooser();
@@ -469,6 +475,15 @@ public class UserController implements Initializable {
                     OpenView.showErrorAlert("Database save failed: " + dbEx.getMessage());
                 }
             }
+            docTreeView.getSelectionModel().clearSelection();
+            rootItem.getChildren().clear();
+            treeImageMap.clear();
+            imageView.setImage(null);
+            txtBoxId.clear();
+            txtCase.clear();
+            txtClient.clear();
+            comboProfiles.setDisable(false);
+            comboProfiles.getSelectionModel().clearSelection();
         } catch (Exception e) {
             OpenView.showErrorAlert("Export failed: " + e.getMessage());
         }

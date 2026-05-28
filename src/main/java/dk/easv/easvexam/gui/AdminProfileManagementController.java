@@ -164,7 +164,7 @@ public class AdminProfileManagementController implements Initializable {
                     logic.deleteProfile(profile);
                     refreshTable();
                 } catch (MyException e) {
-                    OpenView.showErrorAlert(e.getMessage());
+                    OpenView.showErrorAlert("This profile cannot be deleted because it is currently used by exported documents!");
                 }
             }
         });
