@@ -32,7 +32,7 @@
             </HBox>
 
             <Button onAction="#onZoomIn" prefHeight="34.0" prefWidth="75.0" text="Zoom in" />
-            <Button onAction="#onZoomOut" prefHeight="34.0" prefWidth="80.0" text="Zoom out" />
+            <Button onAction="#onZoomOut" prefHeight="34.0" minWidth="80.0" text="Zoom out" />
 
             <ImageView fx:id="brightnessIcon" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -44,12 +44,12 @@
             <TextField fx:id="txtBoxId" prefHeight="34.0" prefWidth="59.0" promptText="Box ID..." />
             <TextField fx:id="txtClient" prefHeight="34.0" prefWidth="59.0" promptText="Client" />
             <TextField fx:id="txtCase" prefHeight="34.0" prefWidth="59.0" promptText="Case" />
-            <ComboBox fx:id="comboStatus" prefHeight="34.0" prefWidth="120.0" promptText="" />
-            <CheckBox fx:id="chkMultiPage" text="Multi-page TIFF" />
+            <ComboBox fx:id="comboStatus" prefHeight="34.0" minWidth="120.0" promptText="" />
+            <CheckBox fx:id="chkMultiPage" minWidth="120.0" text="Multi-page TIFF" />
             <Button mnemonicParsing="false" onAction="#onExportButtonClick" prefHeight="34.0" prefWidth="75.0" text="Export" />
             <Button mnemonicParsing="false" onAction="#showHelpDialog" prefHeight="34.0" prefWidth="20.0" text="?" />
 
-            <Region HBox.hgrow="ALWAYS" />
+
 
             <Button onAction="#logOut" prefHeight="34.0" prefWidth="70.0" text="Log out" />
         </HBox>
