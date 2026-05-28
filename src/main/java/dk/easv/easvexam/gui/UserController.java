@@ -352,6 +352,20 @@ public class UserController implements Initializable {
         }
     }
 
+    @FXML
+    private void onCreateNewDocumentClick() {
+        if (currentDocument != null && !currentDocument.getPages().isEmpty()) {
+            allScannedDocuments.add(currentDocument);
+        }
+        currentDocument = new Document();
+        currentDocument.setBarcode("Manual Split");
+        TreeItem<String> docItem = new TreeItem<>("Document [Manual Split]");
+        rootItem.getChildren().add(docItem);
+        docItem.setExpanded(true);
+        docTreeView.getSelectionModel().select(docItem);
+        logic.logActivity(currentUser.getId(), "User manually created a new document split.");
+    }
+
     private BufferedImage applyProfileTransformations(BufferedImage src, double rotateDegrees, double brightnessValue) {
         if (src == null) return null;
         int w = src.getWidth();
@@ -503,6 +517,11 @@ public class UserController implements Initializable {
 
             else if (isCtrlDown && event.getCode() == KeyCode.E) {
                 onExportButtonClick();
+                event.consume();
+            }
+
+            else if (isCtrlDown && event.getCode() == KeyCode.N) {
+                onCreateNewDocumentClick();
                 event.consume();
             }
 
