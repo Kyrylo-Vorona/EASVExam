@@ -61,9 +61,6 @@ public class ProfilesDAO {
     }
 
     public void deleteProfile(int id) throws MyException {
-        if (id == 11) {
-            throw new MyException("System error: The Standard Profile is system-critical and cannot be deleted!", null);
-        }
         try (Connection con = cm.getConnection()) {
             String sql = "DELETE FROM Profiles WHERE id = ?";
             PreparedStatement pstmt = con.prepareStatement(sql);

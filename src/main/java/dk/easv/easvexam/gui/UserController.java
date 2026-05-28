@@ -181,33 +181,8 @@ public class UserController implements Initializable {
         try {
             if (currentUser != null) {
                 List<Profile> userProfiles = logic.getProfilesForUser(currentUser.getId());
-                int standardProfileId = 11;
-                boolean hasStandard = false;
-                for (Profile p : userProfiles) {
-                    if (p.getId() == standardProfileId) {
-                        hasStandard = true;
-                        break;
-                    }
-                }
-                if (!hasStandard) {
-                    List<Profile> allProfiles = logic.getAllProfiles();
-                    for (Profile p : allProfiles) {
-                        if (p.getId() == standardProfileId) {
-                            userProfiles.add(p);
-                            break;
-                        }
-                    }
-                }
                 comboProfiles.setItems(FXCollections.observableArrayList(userProfiles));
-                for (Profile p : comboProfiles.getItems()) {
-                    if (p.getId() == standardProfileId) {
-                        comboProfiles.getSelectionModel().select(p);
-                        break;
-                    }
-                }
-                if (comboProfiles.getSelectionModel().getSelectedItem() == null && !comboProfiles.getItems().isEmpty()) {
-                    comboProfiles.getSelectionModel().selectFirst();
-                }
+                comboProfiles.getSelectionModel().clearSelection();
             }
         } catch (MyException e) {
             OpenView.showErrorAlert("Could not load profiles: " + e.getMessage());
